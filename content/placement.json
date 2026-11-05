@@ -1,0 +1,164 @@
+{
+"grammar": [
+  {"q": "She ___ to work every day.", "o": ["go", "goes", "going", "gone"], "a": 1, "tag": "G-present-simple"},
+  {"q": "They ___ football last Sunday.", "o": ["play", "plays", "played", "playing"], "a": 2, "tag": "G-past-simple"},
+  {"q": "I ___ TV when you called.", "o": ["watched", "was watching", "am watching", "watch"], "a": 1, "tag": "G-tenses"},
+  {"q": "There ___ a lot of people at the market.", "o": ["is", "are", "be", "was being"], "a": 1, "tag": "G-agreement"},
+  {"q": "He has worked here ___ 2020.", "o": ["for", "since", "in", "from"], "a": 1, "tag": "G-present-perfect"},
+  {"q": "I need some ___ about the course.", "o": ["information", "informations", "an information", "the informations"], "a": 0, "tag": "G-nouns"},
+  {"q": "This is ___ interesting book.", "o": ["a", "an", "the", "(không dùng)"], "a": 1, "tag": "G-articles"},
+  {"q": "My exam is ___ Monday.", "o": ["in", "on", "at", "by"], "a": 1, "tag": "G-prepositions"},
+  {"q": "Hanoi is ___ than Vinh.", "o": ["big", "bigger", "biggest", "more big"], "a": 1, "tag": "G-comparison"},
+  {"q": "She didn't ___ the email.", "o": ["send", "sent", "sends", "sending"], "a": 0, "tag": "G-past-simple"},
+  {"q": "If it rains tomorrow, we ___ at home.", "o": ["stay", "will stay", "stayed", "would stay"], "a": 1, "tag": "G-conditional"},
+  {"q": "The book ___ by a famous writer.", "o": ["wrote", "was written", "is writing", "writes"], "a": 1, "tag": "G-passive"},
+  {"q": "I'm not used to ___ up early.", "o": ["get", "getting", "got", "gets"], "a": 1, "tag": "G-gerund"},
+  {"q": "The woman ___ lives next door is a nurse.", "o": ["which", "who", "whose", "where"], "a": 1, "tag": "G-relative"},
+  {"q": "___ he was ill, he went to work.", "o": ["Because", "Although", "So", "Despite"], "a": 1, "tag": "G-linking"},
+  {"q": "I enjoy ___ new places.", "o": ["visit", "to visit", "visiting", "visited"], "a": 2, "tag": "G-gerund"},
+  {"q": "She has ___ finished her homework.", "o": ["yet", "already", "ever", "since"], "a": 1, "tag": "G-present-perfect"},
+  {"q": "We ___ in Vinh for three years now.", "o": ["live", "lived", "have lived", "are living"], "a": 2, "tag": "G-present-perfect"},
+  {"q": "How ___ students are there in your class?", "o": ["much", "many", "few", "lot"], "a": 1, "tag": "G-nouns"},
+  {"q": "If I ___ rich, I would travel the world.", "o": ["am", "was", "were", "will be"], "a": 2, "tag": "G-conditional"},
+  {"q": "This is the town ___ I was born.", "o": ["which", "who", "where", "when"], "a": 2, "tag": "G-relative"},
+  {"q": "The number of tourists ___ increased since 2015.", "o": ["have", "has", "is", "are"], "a": 1, "tag": "G-agreement"},
+  {"q": "He suggested ___ a taxi.", "o": ["take", "to take", "taking", "took"], "a": 2, "tag": "G-gerund"},
+  {"q": "By the time we arrived, the film ___.", "o": ["started", "has started", "had started", "starts"], "a": 2, "tag": "G-tenses"},
+  {"q": "New roads ___ next year.", "o": ["will build", "will be built", "are building", "built"], "a": 1, "tag": "G-passive"},
+  {"q": "She is the ___ student in the class.", "o": ["most intelligent", "more intelligent", "intelligenter", "intelligentest"], "a": 0, "tag": "G-comparison"},
+  {"q": "I wish I ___ speak French.", "o": ["can", "could", "will", "am able"], "a": 1, "tag": "G-conditional"},
+  {"q": "Not only ___ the exam, but she also got a scholarship.", "o": ["she passed", "did she pass", "she did pass", "passed she"], "a": 1, "tag": "G-advanced"},
+  {"q": "The study, ___ was published in 2020, shows clear results.", "o": ["that", "which", "who", "what"], "a": 1, "tag": "G-relative"},
+  {"q": "Had I known about the test, I ___ harder.", "o": ["would study", "will study", "would have studied", "studied"], "a": 2, "tag": "G-conditional"}
+],
+"vocab": [
+  {"w": "borrow", "vn": "mượn", "band": "1000 từ"},
+  {"w": "weather", "vn": "thời tiết", "band": "1000 từ"},
+  {"w": "angry", "vn": "tức giận", "band": "1000 từ"},
+  {"w": "quickly", "vn": "nhanh chóng", "band": "1000 từ"},
+  {"w": "village", "vn": "làng", "band": "1000 từ"},
+  {"w": "afraid", "vn": "sợ hãi", "band": "1000 từ"},
+  {"w": "arrive", "vn": "đến nơi", "band": "1000 từ"},
+  {"w": "cheap", "vn": "rẻ", "band": "1000 từ"},
+  {"w": "healthy", "vn": "khỏe mạnh", "band": "1000 từ"},
+  {"w": "forget", "vn": "quên", "band": "1000 từ"},
+  {"w": "damage", "vn": "gây hư hại", "band": "2000 từ"},
+  {"w": "argue", "vn": "tranh cãi", "band": "2000 từ"},
+  {"w": "suitable", "vn": "phù hợp", "band": "2000 từ"},
+  {"w": "shortage", "vn": "sự thiếu hụt", "band": "2000 từ"},
+  {"w": "customer", "vn": "khách hàng", "band": "2000 từ"},
+  {"w": "avoid", "vn": "tránh", "band": "2000 từ"},
+  {"w": "wealthy", "vn": "giàu có", "band": "2000 từ"},
+  {"w": "crowd", "vn": "đám đông", "band": "2000 từ"},
+  {"w": "describe", "vn": "mô tả", "band": "2000 từ"},
+  {"w": "silence", "vn": "sự im lặng", "band": "2000 từ"},
+  {"w": "reluctant", "vn": "miễn cưỡng", "band": "Từ khó"},
+  {"w": "inevitable", "vn": "không thể tránh khỏi", "band": "Từ khó"},
+  {"w": "deteriorate", "vn": "xấu đi, suy giảm", "band": "Từ khó"},
+  {"w": "abundant", "vn": "dồi dào", "band": "Từ khó"},
+  {"w": "scarce", "vn": "khan hiếm", "band": "Từ khó"},
+  {"w": "tackle", "vn": "giải quyết, xử lý (vấn đề)", "band": "Từ khó"},
+  {"w": "consensus", "vn": "sự đồng thuận", "band": "Từ khó"},
+  {"w": "vulnerable", "vn": "dễ bị tổn thương", "band": "Từ khó"},
+  {"w": "prosperous", "vn": "thịnh vượng", "band": "Từ khó"},
+  {"w": "hinder", "vn": "cản trở", "band": "Từ khó"},
+  {"w": "analyse", "vn": "phân tích", "band": "Từ học thuật"},
+  {"w": "approach", "vn": "cách tiếp cận", "band": "Từ học thuật"},
+  {"w": "assess", "vn": "đánh giá", "band": "Từ học thuật"},
+  {"w": "evidence", "vn": "bằng chứng", "band": "Từ học thuật"},
+  {"w": "factor", "vn": "yếu tố", "band": "Từ học thuật"},
+  {"w": "principle", "vn": "nguyên tắc", "band": "Từ học thuật"},
+  {"w": "sufficient", "vn": "đủ", "band": "Từ học thuật"},
+  {"w": "obtain", "vn": "đạt được, thu được", "band": "Từ học thuật"},
+  {"w": "emerge", "vn": "nổi lên, xuất hiện", "band": "Từ học thuật"},
+  {"w": "estimate", "vn": "ước tính", "band": "Từ học thuật"}
+],
+"listening": {
+  "title": "Riverside Sports Centre – Membership form",
+  "intro": "Em sẽ nghe một cuộc gọi điện giữa nhân viên trung tâm thể thao và một người muốn đăng ký làm hội viên.",
+  "instruction": "Điền vào phiếu. Mỗi chỗ trống viết KHÔNG QUÁ MỘT TỪ VÀ/HOẶC MỘT CON SỐ.",
+  "voices": {
+    "A": {"lang": "en-GB", "voice": 0, "pitch": 1.1, "rate": 0.92},
+    "B": {"lang": "en-GB", "voice": 1, "pitch": 0.85, "rate": 0.92}
+  },
+  "script": [
+    {"s": "A", "text": "Good morning, Riverside Sports Centre. How can I help you?"},
+    {"s": "B", "text": "Hi. I'd like to join the gym. Can you tell me about the memberships?"},
+    {"s": "A", "text": "Of course. We have two types. The standard membership is thirty-two pounds a month, and the student membership is twenty pounds a month."},
+    {"s": "B", "text": "I'm a student, so the student one, please."},
+    {"s": "A", "text": "Great. Can I have your full name?"},
+    {"s": "B", "text": "Yes, it's Daniel Morton. That's M, O, R, T, O, N."},
+    {"s": "A", "text": "Thank you. And your date of birth?"},
+    {"s": "B", "text": "The fourteenth of March, two thousand and five."},
+    {"s": "A", "text": "And what's your address?"},
+    {"s": "B", "text": "Forty-seven Hill Road."},
+    {"s": "A", "text": "And a phone number?"},
+    {"s": "B", "text": "It's oh seven seven one three, four five six, nine two eight."},
+    {"s": "A", "text": "Which university are you at, and what do you study?"},
+    {"s": "B", "text": "Westfield University. I'm studying chemistry."},
+    {"s": "A", "text": "When would you like to start?"},
+    {"s": "B", "text": "Next Tuesday. Actually, no. Thursday would be better."},
+    {"s": "A", "text": "Thursday is fine. We also run classes in yoga, swimming and boxing. Are you interested in any of them?"},
+    {"s": "B", "text": "I used to do yoga, but I didn't really enjoy it. I'd like to try swimming."},
+    {"s": "A", "text": "Lovely. One more thing. Please bring a photo when you come, for your membership card."},
+    {"s": "B", "text": "A photo. No problem. Thanks for your help."}
+  ],
+  "questions": [
+    {"before": "Type of membership:", "after": "", "answer": ["student"], "tag": "L-detail"},
+    {"before": "Cost per month: £", "after": "", "answer": ["20", "twenty"], "tag": "L-distractor"},
+    {"before": "Surname: Daniel", "after": "", "answer": ["Morton"], "tag": "L-spelling"},
+    {"before": "Date of birth: 14", "after": "2005", "answer": ["March"], "tag": "L-detail"},
+    {"before": "Address:", "after": "Hill Road", "answer": ["47", "forty-seven"], "tag": "L-number"},
+    {"before": "Phone number: 07713", "after": "", "answer": ["456928", "456 928"], "tag": "L-number"},
+    {"before": "Subject studied:", "after": "", "answer": ["chemistry"], "tag": "L-spelling"},
+    {"before": "Start day:", "after": "", "answer": ["Thursday"], "tag": "L-distractor"},
+    {"before": "Class wanted:", "after": "", "answer": ["swimming"], "tag": "L-distractor"},
+    {"before": "Bring a", "after": "for the card", "answer": ["photo", "photograph"], "tag": "L-detail"}
+  ]
+},
+"reading": {
+  "title": "Cycling back into the city",
+  "paragraphs": [
+    {"l": "A", "text": "For much of the twentieth century, the bicycle was seen as the transport of the poor. In many European cities, the number of people cycling to work fell steadily after 1950, as rising incomes allowed families to buy cars. City planners built wide roads and car parks, and cycle paths were often removed to make space for traffic."},
+    {"l": "B", "text": "This trend began to change in the 1970s. A sharp rise in oil prices in 1973 made driving more expensive, and some governments started to look for alternatives. In the Netherlands, public protests about the number of children killed in road accidents led to new policies that gave cyclists separate lanes and safer junctions. Today, more than a quarter of all journeys in the country are made by bicycle."},
+    {"l": "C", "text": "Other cities have followed more recently. Paris, for example, created hundreds of kilometres of new cycle lanes after 2020, and the number of cyclists on some main streets more than doubled within two years. Supporters argue that cycling reduces air pollution and noise, and that it is also good for public health, because regular cyclists tend to have lower rates of heart disease."},
+    {"l": "D", "text": "However, not everyone welcomes the change. Some shop owners worry that fewer car parking spaces will mean fewer customers, although several studies have found that people who walk or cycle to shops actually visit more often and spend more money over a month. Delivery companies also complain that narrower roads make their work slower."},
+    {"l": "E", "text": "Experts agree that building lanes alone is not enough. People are more likely to cycle when they feel safe, when there are secure places to leave their bicycles, and when they can combine cycling with trains or buses. In Tokyo, for instance, large bicycle car parks next to railway stations allow commuters to ride the first part of their journey and take the train for the rest. The future of urban cycling, therefore, may depend as much on good planning as on people's willingness to change their habits."}
+  ],
+  "groups": [
+    {
+      "type": "tfng",
+      "instruction": "Câu 1–6. Các nhận định sau có khớp với thông tin trong bài không? Chọn TRUE nếu khớp, FALSE nếu trái với bài, NOT GIVEN nếu bài không nhắc tới.",
+      "items": [
+        {"q": "After 1950, cycling to work became less common in many European cities.", "answer": "TRUE"},
+        {"q": "Oil prices rose more in the Netherlands in 1973 than in other countries.", "answer": "NOT GIVEN"},
+        {"q": "In the Netherlands, protests about children's road safety helped to change transport policy.", "answer": "TRUE"},
+        {"q": "In Paris, the number of cyclists on some main streets fell after 2020.", "answer": "FALSE"},
+        {"q": "Studies show that shoppers who cycle spend less money each month than other shoppers.", "answer": "FALSE"},
+        {"q": "Most delivery companies in Paris now use bicycles.", "answer": "NOT GIVEN"}
+      ]
+    },
+    {
+      "type": "gap",
+      "instruction": "Câu 7–10. Hoàn thành câu. Mỗi chỗ trống lấy KHÔNG QUÁ HAI TỪ trong bài.",
+      "items": [
+        {"q": "In the past, cycle paths were removed to make space for ______.", "answer": ["traffic"]},
+        {"q": "In the Netherlands, more than a ______ of all journeys are made by bicycle.", "answer": ["quarter"]},
+        {"q": "People who cycle regularly usually have lower rates of ______.", "answer": ["heart disease"]},
+        {"q": "In Tokyo, large bicycle car parks are built next to ______.", "answer": ["railway stations"]}
+      ]
+    }
+  ]
+},
+"writing": {
+  "instruction": "Dành khoảng 40 phút. Viết tối thiểu 250 từ. Nêu rõ quan điểm và đưa lý do, ví dụ từ hiểu biết hoặc trải nghiệm của em.",
+  "prompt": "Some people think that university students should only study subjects that are directly related to their future jobs. To what extent do you agree or disagree?",
+  "minWords": 250,
+  "minutes": 40
+},
+"speaking": [
+  {"q": "Let's talk about where you live. Do you live in a house or an apartment?"},
+  {"q": "What do you study, and why did you choose it?"},
+  {"q": "Do you like travelling? Why or why not?"}
+]
+}

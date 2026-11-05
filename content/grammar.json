@@ -1,0 +1,258 @@
+[
+{
+  "id": "present-simple", "tag": "G-present-simple",
+  "title": "Thì hiện tại đơn", "en": "Present simple",
+  "points": [
+    "Dùng cho thói quen, sự thật hiển nhiên và lịch trình cố định: I study English every evening.",
+    "Chủ ngữ là he, she, it hoặc một danh từ số ít thì động từ thêm -s hoặc -es: she works, he watches, it goes.",
+    "Động từ tận cùng bằng -s, -sh, -ch, -x, -o thì thêm -es (watch → watches). Phụ âm + y thì đổi thành -ies (study → studies).",
+    "Câu phủ định và câu hỏi dùng do/does + động từ nguyên mẫu: She doesn't like coffee. Does he live here? Sau does không thêm -s nữa."
+  ],
+  "examples": [
+    {"en": "My sister studies pharmacy in Vinh.", "vn": "Chị gái tôi học Dược ở Vinh."},
+    {"en": "The pharmacy opens at 7 a.m.", "vn": "Nhà thuốc mở cửa lúc 7 giờ sáng."},
+    {"en": "Water boils at 100 degrees Celsius.", "vn": "Nước sôi ở 100 độ C."},
+    {"en": "He doesn't eat meat.", "vn": "Anh ấy không ăn thịt."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "My brother ___ in Hanoi.", "options": ["live", "lives", "living", "is live"], "answer": 1, "explain": "Chủ ngữ số ít (my brother) nên động từ thêm -s: lives."},
+    {"type": "mcq", "q": "___ she speak English?", "options": ["Do", "Does", "Is", "Are"], "answer": 1, "explain": "Câu hỏi với she dùng Does + động từ nguyên mẫu."},
+    {"type": "mcq", "q": "They ___ to work by bus.", "options": ["goes", "go", "going", "is go"], "answer": 1, "explain": "Chủ ngữ số nhiều (they) giữ nguyên động từ: go."},
+    {"type": "mcq", "q": "The shop ___ at 9 p.m.", "options": ["close", "closes", "closing", "are closing"], "answer": 1, "explain": "Lịch cố định, chủ ngữ số ít: closes."},
+    {"type": "mcq", "q": "He doesn't ___ coffee.", "options": ["likes", "like", "liking", "liked"], "answer": 1, "explain": "Sau doesn't dùng động từ nguyên mẫu: like."},
+    {"type": "text", "q": "Sửa lỗi: She go to university every day.", "answer": ["She goes to university every day."], "explain": "She là ngôi thứ ba số ít: go → goes."},
+    {"type": "text", "q": "Sửa lỗi: My father work in a hospital.", "answer": ["My father works in a hospital."], "explain": "My father là danh từ số ít: work → works."},
+    {"type": "text", "q": "Sửa lỗi: Does he likes music?", "answer": ["Does he like music?"], "explain": "Đã có does thì động từ chính để nguyên mẫu: like."}
+  ]
+},
+{
+  "id": "past-simple", "tag": "G-past-simple",
+  "title": "Thì quá khứ đơn", "en": "Past simple",
+  "points": [
+    "Dùng cho việc đã xong trong quá khứ, thường đi với yesterday, last week, in 2020, two years ago.",
+    "Động từ có quy tắc thêm -ed: work → worked, study → studied, stop → stopped.",
+    "Động từ bất quy tắc phải học thuộc: go → went, buy → bought, see → saw, take → took, eat → ate, write → wrote, rise → rose, fall → fell.",
+    "Câu phủ định và câu hỏi dùng did/didn't + động từ nguyên mẫu: I didn't go. Did you see it?",
+    "Writing Task 1: biểu đồ có năm trong quá khứ thì cả bài dùng quá khứ đơn."
+  ],
+  "examples": [
+    {"en": "I went to Da Nang last summer.", "vn": "Mùa hè năm ngoái tôi đi Đà Nẵng."},
+    {"en": "Sales fell sharply in 2010.", "vn": "Doanh số giảm mạnh vào năm 2010."},
+    {"en": "She didn't take the medicine yesterday.", "vn": "Hôm qua cô ấy không uống thuốc."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "Yesterday I ___ my grandparents.", "options": ["visit", "visited", "visiting", "visits"], "answer": 1, "explain": "Yesterday là quá khứ: visited."},
+    {"type": "mcq", "q": "We ___ to the beach last weekend.", "options": ["go", "goes", "went", "gone"], "answer": 2, "explain": "go là động từ bất quy tắc: go → went → gone."},
+    {"type": "mcq", "q": "Did you ___ the news?", "options": ["saw", "see", "seen", "sees"], "answer": 1, "explain": "Sau did dùng động từ nguyên mẫu: see."},
+    {"type": "mcq", "q": "The number of cars ___ in 2015.", "options": ["rise", "rises", "rose", "risen"], "answer": 2, "explain": "rise → rose → risen. Năm 2015 đã qua nên dùng rose."},
+    {"type": "mcq", "q": "She ___ a new phone two days ago.", "options": ["buy", "buyed", "bought", "buys"], "answer": 2, "explain": "buy là động từ bất quy tắc: bought."},
+    {"type": "text", "q": "Sửa lỗi: She go to school yesterday.", "answer": ["She went to school yesterday."], "explain": "Yesterday là quá khứ: go → went."},
+    {"type": "text", "q": "Sửa lỗi: I didn't went to class last Monday.", "answer": ["I didn't go to class last Monday.", "I did not go to class last Monday."], "explain": "Sau didn't dùng động từ nguyên mẫu: go."},
+    {"type": "text", "q": "Sửa lỗi: In 2010, the price increase by 20%.", "answer": ["In 2010, the price increased by 20%."], "explain": "Năm 2010 đã qua: increase → increased."}
+  ]
+},
+{
+  "id": "present-continuous", "tag": "G-present-continuous",
+  "title": "Hiện tại tiếp diễn và hiện tại đơn", "en": "Present continuous vs present simple",
+  "points": [
+    "Hiện tại tiếp diễn là am/is/are + V-ing: việc đang diễn ra lúc nói, hoặc việc tạm thời trong giai đoạn này (now, at the moment, this week, these days).",
+    "Hiện tại đơn: thói quen và sự thật lâu dài (usually, always, every day).",
+    "Động từ chỉ trạng thái thường không dùng -ing: like, love, know, want, need, believe, understand.",
+    "Chính tả đuôi -ing: make → making, run → running, study → studying."
+  ],
+  "examples": [
+    {"en": "I am studying for my exam at the moment.", "vn": "Lúc này tôi đang ôn thi."},
+    {"en": "I usually study in the evening.", "vn": "Tôi thường học vào buổi tối."},
+    {"en": "More people are working from home these days.", "vn": "Dạo này nhiều người làm việc ở nhà hơn."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "Look! It ___.", "options": ["rains", "is raining", "rain", "raining"], "answer": 1, "explain": "Look! báo hiệu việc đang xảy ra: is raining."},
+    {"type": "mcq", "q": "I usually ___ to bed at 11 p.m.", "options": ["go", "am going", "goes", "going"], "answer": 0, "explain": "usually chỉ thói quen: hiện tại đơn, go."},
+    {"type": "mcq", "q": "She ___ the answer now.", "options": ["knows", "is knowing", "know", "knowing"], "answer": 0, "explain": "know là động từ trạng thái, không dùng -ing kể cả khi có now."},
+    {"type": "mcq", "q": "This week I ___ extra maths classes.", "options": ["teach", "am teaching", "teaches", "teaching"], "answer": 1, "explain": "this week là việc tạm thời: am teaching."},
+    {"type": "mcq", "q": "Water ___ at 0°C.", "options": ["freezes", "is freezing", "freeze", "freezing"], "answer": 0, "explain": "Sự thật khoa học: hiện tại đơn, freezes."},
+    {"type": "text", "q": "Sửa lỗi: I am want a cup of tea.", "answer": ["I want a cup of tea."], "explain": "want là động từ trạng thái, bỏ am."},
+    {"type": "text", "q": "Sửa lỗi: She is study in the library now.", "answer": ["She is studying in the library now."], "explain": "is + V-ing: studying."},
+    {"type": "text", "q": "Sửa lỗi: They playing football at the moment.", "answer": ["They are playing football at the moment.", "They're playing football at the moment."], "explain": "Thiếu are: They are playing."}
+  ]
+},
+{
+  "id": "present-perfect", "tag": "G-present-perfect",
+  "title": "Hiện tại hoàn thành và quá khứ đơn", "en": "Present perfect vs past simple",
+  "points": [
+    "Hiện tại hoàn thành là have/has + V3: việc bắt đầu trong quá khứ và còn kéo dài đến nay (for, since), hoặc kinh nghiệm không nói rõ lúc nào (ever, never, already, yet).",
+    "Quá khứ đơn: có thời điểm xác định đã qua (yesterday, in 2019, two years ago). Có thời điểm cụ thể thì không dùng hiện tại hoàn thành.",
+    "for + khoảng thời gian (for three years); since + mốc thời gian (since 2023).",
+    "V3 bất quy tắc hay gặp: go – gone, see – seen, write – written, take – taken, be – been, eat – eaten."
+  ],
+  "examples": [
+    {"en": "I have studied English for two years.", "vn": "Tôi học tiếng Anh được hai năm rồi."},
+    {"en": "She has never been abroad.", "vn": "Cô ấy chưa bao giờ ra nước ngoài."},
+    {"en": "I started learning English in 2024.", "vn": "Tôi bắt đầu học tiếng Anh năm 2024."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "I ___ in Vinh since 2024.", "options": ["live", "lived", "have lived", "am living"], "answer": 2, "explain": "since + mốc, việc còn tiếp diễn: have lived."},
+    {"type": "mcq", "q": "She ___ to Hue last year.", "options": ["has gone", "went", "goes", "has been"], "answer": 1, "explain": "last year là thời điểm xác định đã qua: went."},
+    {"type": "mcq", "q": "Have you ever ___ sushi?", "options": ["eat", "ate", "eaten", "eating"], "answer": 2, "explain": "have + V3: eaten."},
+    {"type": "mcq", "q": "We have known each other ___ five years.", "options": ["since", "for", "ago", "in"], "answer": 1, "explain": "five years là khoảng thời gian: for."},
+    {"type": "mcq", "q": "He graduated two years ___.", "options": ["ago", "since", "for", "before"], "answer": 0, "explain": "Quá khứ đơn + khoảng thời gian + ago."},
+    {"type": "text", "q": "Sửa lỗi: I have seen that film last week.", "answer": ["I saw that film last week."], "explain": "last week là thời điểm xác định: dùng quá khứ đơn, saw."},
+    {"type": "text", "q": "Sửa lỗi: She has lived here since three years.", "answer": ["She has lived here for three years."], "explain": "three years là khoảng thời gian: for."},
+    {"type": "text", "q": "Sửa lỗi: Have you ever went to Hanoi?", "answer": ["Have you ever been to Hanoi?", "Have you ever gone to Hanoi?"], "explain": "have + V3. Nói về kinh nghiệm đã từng đến thường dùng been to."}
+  ]
+},
+{
+  "id": "nouns", "tag": "G-nouns",
+  "title": "Danh từ số ít, số nhiều, đếm được, không đếm được", "en": "Countable and uncountable nouns",
+  "points": [
+    "Số nhiều thêm -s hoặc -es: book → books, bus → buses. Bất quy tắc: person → people, child → children, man → men, woman → women.",
+    "Sau số từ hai trở lên, many, a few, several, these, those thì danh từ ở dạng số nhiều: three books, many students.",
+    "Danh từ không đếm được không thêm -s và không đi với a/an: information, advice, money, homework, research, equipment, furniture. Dùng some, much, a lot of.",
+    "Listening và Reading: thiếu -s ở đáp án số nhiều là bị chấm sai. Luôn kiểm tra trước chỗ trống có a, many hay số nào không."
+  ],
+  "examples": [
+    {"en": "There are two hospitals in my town.", "vn": "Thị trấn tôi có hai bệnh viện."},
+    {"en": "Can you give me some advice?", "vn": "Bạn cho tôi vài lời khuyên được không?"},
+    {"en": "How much money do you need?", "vn": "Bạn cần bao nhiêu tiền?"}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "There are three ___ in my group.", "options": ["student", "students", "studentes", "a student"], "answer": 1, "explain": "three + danh từ số nhiều: students."},
+    {"type": "mcq", "q": "Can you give me some ___?", "options": ["informations", "information", "an information", "information's"], "answer": 1, "explain": "information không đếm được, không thêm -s."},
+    {"type": "mcq", "q": "Many ___ visit Hoi An every year.", "options": ["tourist", "tourists", "touristes", "a tourist"], "answer": 1, "explain": "many + danh từ số nhiều."},
+    {"type": "mcq", "q": "How ___ money do you spend on food?", "options": ["many", "much", "few", "a lot"], "answer": 1, "explain": "money không đếm được: how much."},
+    {"type": "mcq", "q": "The ___ are playing in the park.", "options": ["childs", "children", "childrens", "child"], "answer": 1, "explain": "child → children (bất quy tắc)."},
+    {"type": "text", "q": "Sửa lỗi: I have a lot of homeworks.", "answer": ["I have a lot of homework."], "explain": "homework không đếm được."},
+    {"type": "text", "q": "Sửa lỗi: She bought two new book.", "answer": ["She bought two new books."], "explain": "two + danh từ số nhiều: books."},
+    {"type": "text", "q": "Sửa lỗi: He gave me many useful advices.", "answer": ["He gave me a lot of useful advice.", "He gave me some useful advice.", "He gave me much useful advice.", "He gave me useful advice."], "explain": "advice không đếm được: không dùng many, không thêm -s."}
+  ]
+},
+{
+  "id": "articles", "tag": "G-articles",
+  "title": "Mạo từ a, an, the", "en": "Articles",
+  "points": [
+    "a/an đi với danh từ đếm được số ít, khi nhắc lần đầu hoặc nói về nghề nghiệp: a book, She is a pharmacist.",
+    "an đứng trước một âm nguyên âm, xét theo cách đọc chứ không theo chữ: an hour, an apple, nhưng a university (đọc /juː/).",
+    "the dùng cho vật đã xác định, duy nhất hoặc đã nhắc trước đó: the sun, the book I bought, và trước so sánh nhất: the best.",
+    "Không dùng mạo từ khi nói chung chung về danh từ số nhiều hoặc không đếm được: Students need sleep. Money is important.",
+    "Một số tên nước có the: the UK, the USA, the Philippines."
+  ],
+  "examples": [
+    {"en": "I saw a cat. The cat was black.", "vn": "Tôi thấy một con mèo. Con mèo đó màu đen."},
+    {"en": "She is a pharmacist.", "vn": "Cô ấy là dược sĩ."},
+    {"en": "The UK has many universities.", "vn": "Anh có nhiều trường đại học."},
+    {"en": "Tourism is important for the economy.", "vn": "Du lịch quan trọng đối với nền kinh tế."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "She is ___ pharmacist.", "options": ["a", "an", "the", "(không dùng)"], "answer": 0, "explain": "Nghề nghiệp dùng a/an; pharmacist bắt đầu bằng phụ âm: a."},
+    {"type": "mcq", "q": "I waited for ___ hour.", "options": ["a", "an", "the", "(không dùng)"], "answer": 1, "explain": "hour đọc âm /aʊ/, h câm: an."},
+    {"type": "mcq", "q": "___ sun rises in the east.", "options": ["A", "An", "The", "(không dùng)"], "answer": 2, "explain": "Mặt trời là duy nhất: the."},
+    {"type": "mcq", "q": "He studies at ___ university in Hanoi.", "options": ["a", "an", "the", "(không dùng)"], "answer": 0, "explain": "university đọc /juː/ là phụ âm: a."},
+    {"type": "mcq", "q": "___ money cannot buy happiness.", "options": ["A", "An", "The", "(không dùng)"], "answer": 3, "explain": "Nói chung chung về danh từ không đếm được: không dùng mạo từ."},
+    {"type": "mcq", "q": "This is ___ best restaurant in town.", "options": ["a", "an", "the", "(không dùng)"], "answer": 2, "explain": "Trước so sánh nhất dùng the."},
+    {"type": "text", "q": "Sửa lỗi: My sister is engineer.", "answer": ["My sister is an engineer."], "explain": "Nghề nghiệp cần a/an; engineer bắt đầu bằng nguyên âm: an."},
+    {"type": "text", "q": "Sửa lỗi: I want to buy an new phone.", "answer": ["I want to buy a new phone."], "explain": "Xét âm của từ ngay sau mạo từ: new bắt đầu bằng phụ âm nên dùng a."}
+  ]
+},
+{
+  "id": "prepositions", "tag": "G-prepositions",
+  "title": "Giới từ in, on, at và giới từ trong Task 1", "en": "Prepositions",
+  "points": [
+    "Thời gian: at + giờ (at 7 a.m., at night); on + ngày, thứ (on Monday, on 5 May); in + tháng, năm, mùa, buổi (in July, in 2027, in the morning).",
+    "Nơi chốn: at + một điểm cụ thể (at the bus stop, at school); in + không gian bao quanh, thành phố, quốc gia (in the room, in Vinh); on + bề mặt, tên đường (on the table, on Tran Phu Street).",
+    "Anh–Anh nói at the weekend, Anh–Mỹ nói on the weekend. Cả hai đều đúng.",
+    "Task 1: in 2010; between 2000 and 2010; from 20% to 35%; tăng thêm một lượng dùng by (rose by 15%); đạt tới một mức dùng to (rose to 35%)."
+  ],
+  "examples": [
+    {"en": "My exam is in July.", "vn": "Kỳ thi của tôi vào tháng Bảy."},
+    {"en": "The class starts at 8 a.m. on Monday.", "vn": "Lớp học bắt đầu lúc 8 giờ sáng thứ Hai."},
+    {"en": "Sales rose by 10% to 60%.", "vn": "Doanh số tăng thêm 10%, lên mức 60%."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "I was born ___ 2005.", "options": ["in", "on", "at", "by"], "answer": 0, "explain": "Năm dùng in."},
+    {"type": "mcq", "q": "The meeting is ___ Friday.", "options": ["in", "on", "at", "by"], "answer": 1, "explain": "Thứ trong tuần dùng on."},
+    {"type": "mcq", "q": "See you ___ 7 p.m.", "options": ["in", "on", "at", "by"], "answer": 2, "explain": "Giờ cụ thể dùng at."},
+    {"type": "mcq", "q": "I live ___ Vinh City.", "options": ["in", "on", "at", "by"], "answer": 0, "explain": "Thành phố dùng in."},
+    {"type": "mcq", "q": "The price increased ___ 15%, from 20 to 23 dollars.", "options": ["in", "on", "at", "by"], "answer": 3, "explain": "Mức tăng thêm dùng by."},
+    {"type": "mcq", "q": "There is a pharmacy ___ Tran Phu Street.", "options": ["in", "on", "at", "by"], "answer": 1, "explain": "Tên đường dùng on (Anh–Anh)."},
+    {"type": "text", "q": "Sửa lỗi: I usually study in night.", "answer": ["I usually study at night."], "explain": "Cụm cố định: at night."},
+    {"type": "text", "q": "Sửa lỗi: My birthday is in 12 May.", "answer": ["My birthday is on 12 May.", "My birthday is on May 12."], "explain": "Ngày cụ thể dùng on."}
+  ]
+},
+{
+  "id": "comparison", "tag": "G-comparison",
+  "title": "So sánh hơn và so sánh nhất", "en": "Comparatives and superlatives",
+  "points": [
+    "Tính từ ngắn: thêm -er … than và the …-est: cheap → cheaper → the cheapest; big → bigger → the biggest; happy → happier → the happiest.",
+    "Tính từ dài: more … than và the most …: expensive → more expensive → the most expensive.",
+    "Bất quy tắc: good → better → the best; bad → worse → the worst; many/much → more → the most; little → less → the least.",
+    "Task 1 hay dùng: twice as high as, much higher than, slightly lower than, the highest figure."
+  ],
+  "examples": [
+    {"en": "Hanoi is bigger than Vinh.", "vn": "Hà Nội lớn hơn Vinh."},
+    {"en": "This medicine is more effective than that one.", "vn": "Thuốc này hiệu quả hơn thuốc kia."},
+    {"en": "Japan had the highest figure.", "vn": "Nhật Bản có số liệu cao nhất."},
+    {"en": "Coal use was twice as high as gas use.", "vn": "Lượng than dùng cao gấp đôi lượng khí đốt."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "My room is ___ than yours.", "options": ["small", "smaller", "more small", "smallest"], "answer": 1, "explain": "Tính từ ngắn + -er than."},
+    {"type": "mcq", "q": "This is the ___ book I have ever read.", "options": ["interesting", "more interesting", "most interesting", "interestinger"], "answer": 2, "explain": "Tính từ dài, so sánh nhất: the most interesting."},
+    {"type": "mcq", "q": "Her English is ___ than mine.", "options": ["good", "better", "best", "more good"], "answer": 1, "explain": "good → better (bất quy tắc)."},
+    {"type": "mcq", "q": "Rent in Hanoi is ___ than in Vinh.", "options": ["expensive", "more expensive", "expensiver", "most expensive"], "answer": 1, "explain": "Tính từ dài: more expensive than."},
+    {"type": "mcq", "q": "Japan had the ___ number of visitors.", "options": ["high", "higher", "highest", "most high"], "answer": 2, "explain": "the + tính từ ngắn -est: the highest."},
+    {"type": "text", "q": "Sửa lỗi: Today is more hot than yesterday.", "answer": ["Today is hotter than yesterday."], "explain": "hot là tính từ ngắn: hotter (gấp đôi t)."},
+    {"type": "text", "q": "Sửa lỗi: This is the most cheap phone in the shop.", "answer": ["This is the cheapest phone in the shop."], "explain": "cheap là tính từ ngắn: the cheapest."},
+    {"type": "text", "q": "Sửa lỗi: The number of cars was twice as high than in 2000.", "answer": ["The number of cars was twice as high as in 2000."], "explain": "Cấu trúc as … as, không dùng than."}
+  ]
+},
+{
+  "id": "linking", "tag": "G-linking",
+  "title": "Nối câu: and, but, so, because, although, however", "en": "Linking ideas",
+  "points": [
+    "and thêm ý; but nêu ý đối lập; so nêu kết quả; because nêu nguyên nhân.",
+    "because + mệnh đề (because it was raining); because of + danh từ (because of the rain).",
+    "although + mệnh đề. Không dùng although và but trong cùng một câu; tương tự, không dùng because và so trong cùng một câu.",
+    "however đứng đầu câu mới và có dấu phẩy sau: The city is noisy. However, it offers many jobs.",
+    "Câu có hai vế nối bằng because, although, when, if giúp tăng điểm Grammatical Range ở Writing và Speaking."
+  ],
+  "examples": [
+    {"en": "I like my hometown because it is peaceful.", "vn": "Tôi thích quê mình vì ở đó yên bình."},
+    {"en": "Although rent is high, many students live in the city.", "vn": "Mặc dù tiền thuê nhà cao, nhiều sinh viên vẫn sống ở thành phố."},
+    {"en": "The city is noisy. However, it offers many jobs.", "vn": "Thành phố ồn ào. Tuy nhiên, ở đó có nhiều việc làm."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "I was tired, ___ I went to bed early.", "options": ["but", "so", "because", "although"], "answer": 1, "explain": "Đi ngủ sớm là kết quả của mệt: so."},
+    {"type": "mcq", "q": "She passed the exam ___ she studied hard.", "options": ["so", "but", "because", "however"], "answer": 2, "explain": "Học chăm là nguyên nhân: because."},
+    {"type": "mcq", "q": "___ it was raining, we went out.", "options": ["Because", "Although", "So", "However"], "answer": 1, "explain": "Hai ý trái ngược: Although."},
+    {"type": "mcq", "q": "He stayed home because ___ the storm.", "options": ["of", "for", "to", "by"], "answer": 0, "explain": "because of + danh từ."},
+    {"type": "mcq", "q": "The job pays well. ___, it is very stressful.", "options": ["However", "Because", "So", "Although"], "answer": 0, "explain": "Đầu câu mới, ý đối lập, có dấu phẩy: However."},
+    {"type": "text", "q": "Sửa lỗi: Although he was tired, but he kept working.", "answer": ["Although he was tired, he kept working.", "He was tired, but he kept working."], "explain": "Không dùng although và but cùng một câu."},
+    {"type": "text", "q": "Sửa lỗi: I stayed at home because the rain.", "answer": ["I stayed at home because of the rain."], "explain": "the rain là danh từ: because of."},
+    {"type": "text", "q": "Sửa lỗi: Because it was late so we took a taxi.", "answer": ["Because it was late, we took a taxi.", "It was late, so we took a taxi."], "explain": "Không dùng because và so cùng một câu."}
+  ]
+},
+{
+  "id": "passive", "tag": "G-passive",
+  "title": "Câu bị động cơ bản", "en": "The passive",
+  "points": [
+    "Câu bị động là be + V3. Dùng khi người làm không quan trọng hoặc không rõ. Rất hay dùng trong Writing Task 1 dạng quy trình (process).",
+    "Hiện tại: is/are + V3 (The leaves are dried). Quá khứ: was/were + V3 (The bridge was built in 1990).",
+    "Muốn nói ai hoặc cái gì làm thì thêm by: The medicine is produced by a German company.",
+    "Trình tự các bước của quy trình: First, … Then / Next, … After that, … Finally, …"
+  ],
+  "examples": [
+    {"en": "Tea leaves are picked by hand.", "vn": "Lá chè được hái bằng tay."},
+    {"en": "The leaves are then dried in the sun.", "vn": "Sau đó lá được phơi khô dưới nắng."},
+    {"en": "This hospital was built in 1995.", "vn": "Bệnh viện này được xây năm 1995."}
+  ],
+  "exercises": [
+    {"type": "mcq", "q": "English ___ in many countries.", "options": ["speaks", "is spoken", "spoke", "is speaking"], "answer": 1, "explain": "Tiếng Anh được nói: bị động is spoken."},
+    {"type": "mcq", "q": "The bridge ___ in 2010.", "options": ["built", "was built", "is build", "builds"], "answer": 1, "explain": "Quá khứ bị động: was built."},
+    {"type": "mcq", "q": "The bottles ___ and then reused.", "options": ["clean", "are cleaned", "cleaning", "is cleaned"], "answer": 1, "explain": "bottles số nhiều: are cleaned."},
+    {"type": "mcq", "q": "The medicine is made ___ a company in India.", "options": ["by", "from", "with", "of"], "answer": 0, "explain": "Người hoặc đơn vị thực hiện đi sau by."},
+    {"type": "mcq", "q": "Many houses ___ by the flood last year.", "options": ["destroyed", "were destroyed", "was destroyed", "are destroyed"], "answer": 1, "explain": "houses số nhiều, last year là quá khứ: were destroyed."},
+    {"type": "text", "q": "Sửa lỗi: The rice is harvest in October.", "answer": ["The rice is harvested in October."], "explain": "is + V3: harvested."},
+    {"type": "text", "q": "Sửa lỗi: This school was build in 1990.", "answer": ["This school was built in 1990."], "explain": "build → built (V3 bất quy tắc)."},
+    {"type": "text", "q": "Sửa lỗi: The letters is sent every morning.", "answer": ["The letters are sent every morning."], "explain": "letters số nhiều: are sent."}
+  ]
+}
+]
