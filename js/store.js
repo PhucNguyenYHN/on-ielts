@@ -14,6 +14,7 @@ const blank = () => ({
   grammar: {},                  // mã bài -> điểm cao nhất (%)
   placement: {},                // phần -> kết quả kiểm tra đầu vào
   device: null,                 // kết quả thử micro
+  pron: {},                     // từ -> { n lần đọc, miss lần máy không nghe ra }
   prefs: { accent: 'en-GB' },
 });
 

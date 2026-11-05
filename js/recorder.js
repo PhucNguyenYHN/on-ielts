@@ -1,4 +1,5 @@
 // Ghi âm bằng micro. iPhone (Safari) ghi ra audio/mp4, Chrome ra audio/webm.
+import { sttSupport, listen } from './speech.js';
 export function pickMime() {
   if (!window.MediaRecorder) return '';
   for (const m of ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm']) {
@@ -44,29 +45,39 @@ export function blobToBase64(blob) {
   });
 }
 
-// Khối giao diện ghi âm dùng chung: nút ghi/dừng, nghe lại, gọi onDone(blob, mime)
-export function recorderWidget(el, { maxSec = 60, onDone } = {}) {
-  let rec = null, timer = null, t0 = 0, url = null;
+// Khối giao diện ghi âm dùng chung: nút ghi/dừng, nghe lại, gọi onDone(blob, mime, { text, error, sec }).
+// transcribe: true thì vừa ghi âm vừa cho máy nghe ra chữ (nếu trình duyệt hỗ trợ).
+export function recorderWidget(el, { maxSec = 60, onDone, transcribe = false, onLive } = {}) {
+  let rec = null, stt = null, timer = null, t0 = 0, url = null, sttErr = '', busy = false;
   el.innerHTML = `<div class="row"><button class="btn" data-rec>● Ghi âm</button><span class="rec muted small" data-st></span></div><div data-play></div>`;
   const btn = el.querySelector('[data-rec]'), st = el.querySelector('[data-st]'), play = el.querySelector('[data-play]');
   async function stopRec() {
+    if (busy) return;
+    busy = true;
     clearInterval(timer);
-    const r = rec; rec = null;
-    const blob = await r.stop();
+    const r = rec, s = stt; rec = null; stt = null;
+    const sec = Math.round((Date.now() - t0) / 1000);
+    const [blob, heard] = await Promise.all([r.stop(), s ? s.stop() : Promise.resolve({ text: '', error: transcribe ? 'unsupported' : '' })]);
+    busy = false;
     btn.textContent = '● Ghi lại';
     st.textContent = '';
     if (url) URL.revokeObjectURL(url);
     url = URL.createObjectURL(blob);
     play.innerHTML = `<audio controls src="${url}"></audio>`;
-    onDone?.(blob, r.mime);
+    onDone?.(blob, r.mime, { text: heard.text, error: heard.error || sttErr, sec });
   }
   btn.onclick = async () => {
+    if (busy) return;
     if (rec) return stopRec();
     try {
       rec = await startRecording();
     } catch (e) {
       st.textContent = 'Không mở được micro: ' + (e.name || e.message);
       return;
+    }
+    sttErr = '';
+    if (transcribe && sttSupport()) {
+      stt = listen({ lang: 'en-US', onText: t => onLive?.(t), onError: e => { sttErr = e; } });
     }
     t0 = Date.now();
     btn.textContent = '■ Dừng';
@@ -77,5 +88,5 @@ export function recorderWidget(el, { maxSec = 60, onDone } = {}) {
       if (s >= maxSec) stopRec();
     }, 250);
   };
-  return () => { clearInterval(timer); if (rec) rec.stop(); };
+  return () => { clearInterval(timer); if (rec) rec.stop(); if (stt) stt.stop(); };
 }

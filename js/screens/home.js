@@ -37,6 +37,9 @@ export default async function home(view) {
   cards.push(`<a class="card" href="#/vocab/dictation">
     <h3>Nghe và gõ chính tả <span class="badge">10 từ</span></h3>
     <div class="meta">Luyện viết đúng chính tả khi điền từ ở bài Listening.</div></a>`);
+  cards.push(`<a class="card" href="#/speak">
+    <h3>Luyện nói <span class="badge">5 phút</span></h3>
+    <div class="meta">Đọc to 5 câu, máy nghe ra đúng chữ là phát âm đạt. Có cả câu hỏi Part 1 về bản thân em.</div></a>`);
 
   view.innerHTML = `
     <div class="card hero">

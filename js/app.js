@@ -6,9 +6,10 @@ import grammar from './screens/grammar.js';
 import placement from './screens/placement.js';
 import mic from './screens/mic.js';
 import settings from './screens/settings.js';
+import speak from './screens/speak.js';
 
-const routes = { home, vocab, grammar, placement, mic, settings };
-const LEARNING = new Set(['vocab', 'grammar', 'placement', 'mic']);
+const routes = { home, vocab, grammar, placement, mic, settings, speak };
+const LEARNING = new Set(['vocab', 'grammar', 'placement', 'mic', 'speak']);
 const root = document.getElementById('app');
 let cleanup = null, current = 'home', token = 0;
 

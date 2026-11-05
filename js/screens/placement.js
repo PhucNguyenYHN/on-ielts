@@ -281,14 +281,18 @@ function speaking(view, data) {
     const st = box.querySelector('[data-st]');
     cleanups.push(recorderWidget(box.querySelector('[data-rec]'), {
       maxSec: 60,
-      onDone: async (blob, mime) => {
+      transcribe: true,
+      onDone: async (blob, mime, info) => {
         recorded.add(i);
+        const text = info?.text || '';
+        const words = wordCount(text);
+        store.logAttempt({ item: `PL-S${i + 1}`, skill: 'S', type: 'S-part1', correct: words >= 25, detail: `${words} từ, ${info?.sec || 0} giây | ${text.slice(0, 300)}` });
         if (!store.apiOn()) { st.textContent = 'Đã ghi. App chưa nối máy chủ nên bản ghi chỉ nghe lại được trên máy này.'; return; }
         st.textContent = 'Đang gửi bản ghi…';
         try {
           const data64 = await blobToBase64(blob);
-          await store.api({ action: 'audio', data: data64, mime, question: q.q, label: `dau-vao-cau-${i + 1}`, source: 'Kiểm tra đầu vào' });
-          st.textContent = 'Đã gửi bản ghi lên Google Drive.';
+          await store.api({ action: 'audio', data: data64, mime, question: q.q, label: `dau-vao-cau-${i + 1}`, source: 'Kiểm tra đầu vào', transcript: text, words, seconds: info?.sec || 0 });
+          st.textContent = `Đã gửi bản ghi lên Google Drive.${text ? ` Máy nghe được ${words} từ.` : ''}`;
         } catch (e) { st.textContent = 'Gửi không được: ' + e.message + '. Ghi lại để gửi lần nữa.'; }
       },
     }));
