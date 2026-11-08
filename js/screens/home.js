@@ -16,6 +16,12 @@ export default async function home(view) {
   const mins = Math.round(s.days[today()] || 0);
 
   const cards = [];
+  const graded = store.unseenGraded();
+  if (graded.length) {
+    cards.push(`<a class="card" href="#/writing/${graded[0].ts}">
+      <h3>Bài viết đã có điểm <span class="badge warn">Mới</span></h3>
+      <div class="meta">${graded[0].score ? `Band ${esc(graded[0].score)}. ` : ''}Mở xem nhận xét và các lỗi cần sửa.</div></a>`);
+  }
   if (pDone < PLACEMENT_SECTIONS.length) {
     cards.push(`<a class="card" href="#/placement">
       <h3>Kiểm tra đầu vào <span class="badge warn">Làm trước</span></h3>
@@ -53,5 +59,6 @@ export default async function home(view) {
     </div>
     <h2>${bi('Việc hôm nay', "Today's plan")}</h2>
     ${cards.join('')}
+    <p><a href="#/writing">Xem tất cả bài viết đã nộp →</a></p>
     <p class="muted small">Buổi ngắn 10–15 phút: ôn từ vựng và nghe–gõ. Buổi dài 45–60 phút: làm thêm một bài ngữ pháp hoặc một phần kiểm tra. Học từ ${CONFIG.sessionMinutes} phút trong ngày thì tính là một buổi.</p>`;
 }

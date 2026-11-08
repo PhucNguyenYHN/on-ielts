@@ -116,6 +116,26 @@ export async function pullState(force = false) {
   return false;
 }
 
+// ---- Bài viết đã nộp và điểm chấm (đọc từ tab BaiViet, lưu đệm trên máy) ----
+const WKEY = 'ielts.writings.v1';
+export const cachedWritings = () => read(WKEY, []);
+export async function fetchWritings() {
+  if (!apiOn()) return cachedWritings();
+  const r = await fetch(`${CONFIG.apiUrl}?action=writings&token=${encodeURIComponent(CONFIG.token)}`);
+  const j = await r.json();
+  if (!j.ok || !Array.isArray(j.writings)) throw new Error(j.error || 'Máy chủ chưa có lệnh đọc bài viết');
+  try { localStorage.setItem(WKEY, JSON.stringify(j.writings)); } catch { /* bỏ qua */ }
+  return j.writings;
+}
+// Bài đã có điểm mà em chưa mở xem
+export function unseenGraded(list = cachedWritings()) {
+  const seen = state.seenGrades || {};
+  return list.filter(w => (w.score || w.comment) && seen[w.ts] !== w.score + '|' + w.comment);
+}
+export function markSeen(w) {
+  update(s => { s.seenGrades ||= {}; s.seenGrades[w.ts] = w.score + '|' + w.comment; });
+}
+
 export function resetLocal() {
   state = blank();
   queue = [];

@@ -7,8 +7,9 @@ import placement from './screens/placement.js';
 import mic from './screens/mic.js';
 import settings from './screens/settings.js';
 import speak from './screens/speak.js';
+import writing from './screens/writing.js';
 
-const routes = { home, vocab, grammar, placement, mic, settings, speak };
+const routes = { home, vocab, grammar, placement, mic, settings, speak, writing };
 const LEARNING = new Set(['vocab', 'grammar', 'placement', 'mic', 'speak']);
 const root = document.getElementById('app');
 let cleanup = null, current = 'home', token = 0;
@@ -50,3 +51,8 @@ store.onStatus(s => { syncEl.dataset.s = s; syncEl.textContent = LABEL[s]; });
 
 render();
 store.pullState().then(changed => { if (changed) render(); store.flush(); });
+// Tải điểm Writing mới; có bài mới chấm thì vẽ lại màn Hôm nay để hiện thẻ báo
+const before = store.unseenGraded().length;
+store.fetchWritings().then(list => {
+  if (current === 'home' && store.unseenGraded(list).length !== before) render();
+}).catch(() => {});
