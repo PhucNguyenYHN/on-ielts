@@ -59,7 +59,7 @@ function cards(view, vocab) {
       <div class="qhead muted small">Còn ${q.length} thẻ ${isNew ? '<span class="badge">Từ mới</span>' : ''}</div>
       <div class="card flash">
         <div class="word">${esc(v.w)}</div>
-        <div class="pos">${esc(v.p)} · ${esc(v.t)}</div>
+        <div class="pos">${esc(v.p)} · ${esc(v.t)}${v.cefr ? ` · <span class="badge">${esc(v.cefr)}</span>` : ""}</div>
         <div class="row" style="justify-content:center;margin-top:8px">
           <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button>
           <button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button>
@@ -141,7 +141,7 @@ function list(view, vocab) {
   const topics = [...new Set(vocab.map(v => v.t))];
   const known = v => s.srs[v.w]?.ivl >= 1;
   const row = v => `<div class="ex"><div class="row" style="justify-content:space-between">
-      <span><b>${esc(v.w)}</b> <span class="muted small">${esc(v.p)}</span> ${known(v) ? '<span class="badge done">đã thuộc</span>' : ''}</span>
+      <span><b>${esc(v.w)}</b> <span class="muted small">${esc(v.p)}${v.cefr ? ` · ${esc(v.cefr)}` : ""}</span> ${known(v) ? '<span class="badge done">đã thuộc</span>' : ''}</span>
       <span><button class="say" data-say="${esc(v.w)}" data-lang="en-GB">UK</button> <button class="say" data-say="${esc(v.w)}" data-lang="en-US">US</button></span></div>
       <div>${esc(v.vn)}</div><div class="muted small">${esc(v.ex)}</div></div>`;
   view.innerHTML = `<h1>${bi('Danh sách từ', 'Word list')}</h1>
