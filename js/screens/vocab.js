@@ -151,14 +151,20 @@ function learn(view, vocab) {
         <div class="pos">${esc(v.p)} · ${esc(v.t)}${v.cefr ? ` · <span class="badge">${esc(v.cefr)}</span>` : ''}</div>
         <div class="row" style="justify-content:center;margin-top:8px">
           <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button><button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button></div>
-        <div class="back"><div class="vn">${esc(v.vn)}</div>
+        <div class="back" hidden><div class="vn">${esc(v.vn)}</div>
           <p>${esc(v.ex)} <button class="say" data-say="${esc(v.ex)}" data-lang="${accent()}">🔊</button></p>
           <div class="memo"><b>💡 Cách nhớ</b><div>${esc(v.m || autoTip(v))}</div></div></div>
       </div>
-      <div class="row">${i ? '<button class="btn ghost" data-prev>← Từ trước</button>' : ''}<button class="btn" data-next style="flex:1">${i + 1 < words.length ? 'Từ tiếp theo →' : 'Xong, sang luyện tập →'}</button></div>
-      <p class="muted small" style="text-align:center">Đọc to từ và câu ví dụ, nhìn kỹ cách nhớ. Bước này chưa kiểm tra.</p>`;
+      <button class="btn block" data-show>Đoán nghĩa trong đầu rồi bấm để xem · Show meaning</button>
+      <div class="row" data-nav hidden>${i ? '<button class="btn ghost" data-prev>← Từ trước</button>' : ''}<button class="btn" data-next style="flex:1">${i + 1 < words.length ? 'Từ tiếp theo →' : 'Xong, sang luyện tập →'}</button></div>
+      <p class="muted small" style="text-align:center">Thử đoán nghĩa trước khi lật. Sau đó đọc to từ, câu ví dụ và nhìn kỹ cách nhớ.</p>`;
     bindSay(view);
     say(v.w, { lang: accent() });
+    view.querySelector('[data-show]').onclick = e => {
+      e.target.hidden = true;
+      view.querySelector('.back').hidden = false;
+      view.querySelector('[data-nav]').hidden = false;
+    };
     view.querySelector('[data-next]').onclick = () => { i++; if (i < words.length) study(); else interlude('Bước 2/3 · Chọn nghĩa', 'Nhìn từ tiếng Anh và chọn nghĩa đúng. Sai thì app chỉ cách nhớ.', quizMeaning); };
     view.querySelector('[data-prev]')?.addEventListener('click', () => { i--; study(); });
   }
