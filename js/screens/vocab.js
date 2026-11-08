@@ -135,14 +135,34 @@ function dictation(view, vocab) {
   });
 }
 
+// Danh sách theo chủ đề, mỗi chủ đề thu gọn; có ô tìm từ hoặc nghĩa
 function list(view, vocab) {
   const s = store.get();
   const topics = [...new Set(vocab.map(v => v.t))];
+  const known = v => s.srs[v.w]?.ivl >= 1;
+  const row = v => `<div class="ex"><div class="row" style="justify-content:space-between">
+      <span><b>${esc(v.w)}</b> <span class="muted small">${esc(v.p)}</span> ${known(v) ? '<span class="badge done">đã thuộc</span>' : ''}</span>
+      <span><button class="say" data-say="${esc(v.w)}" data-lang="en-GB">UK</button> <button class="say" data-say="${esc(v.w)}" data-lang="en-US">US</button></span></div>
+      <div>${esc(v.vn)}</div><div class="muted small">${esc(v.ex)}</div></div>`;
   view.innerHTML = `<h1>${bi('Danh sách từ', 'Word list')}</h1>
-    ${topics.map(t => `<h2>${esc(t)}</h2><div class="card">${vocab.filter(v => v.t === t).map(v => `
-      <div class="ex"><div class="row" style="justify-content:space-between">
-        <span><b>${esc(v.w)}</b> <span class="muted small">${esc(v.p)}</span> ${s.srs[v.w]?.ivl >= 1 ? '<span class="badge done">đã thuộc</span>' : ''}</span>
-        <span><button class="say" data-say="${esc(v.w)}" data-lang="en-GB">UK</button> <button class="say" data-say="${esc(v.w)}" data-lang="en-US">US</button></span></div>
-        <div>${esc(v.vn)}</div><div class="muted small">${esc(v.ex)}</div></div>`).join('')}</div>`).join('')}`;
-  bindSay(view);
+    <input class="inp" data-q placeholder="Tìm từ tiếng Anh hoặc nghĩa tiếng Việt…" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div data-res></div>
+    <div data-topics>${topics.map(t => {
+      const items = vocab.filter(v => v.t === t);
+      return `<details class="card" data-t="${esc(t)}"><summary><b>${esc(t)}</b> <span class="muted small">${items.filter(known).length}/${items.length} đã thuộc</span></summary><div data-body></div></details>`;
+    }).join('')}</div>`;
+  // Chỉ dựng danh sách từ khi mở chủ đề, để trang nhẹ trên điện thoại
+  view.querySelectorAll('details[data-t]').forEach(d => d.addEventListener('toggle', () => {
+    const body = d.querySelector('[data-body]');
+    if (d.open && !body.childElementCount) { body.innerHTML = vocab.filter(v => v.t === d.dataset.t).map(row).join(''); bindSay(body); }
+  }));
+  const res = view.querySelector('[data-res]'), tops = view.querySelector('[data-topics]');
+  view.querySelector('[data-q]').oninput = e => {
+    const q = e.target.value.trim().toLowerCase();
+    tops.hidden = !!q;
+    if (!q) { res.innerHTML = ''; return; }
+    const hits = vocab.filter(v => v.w.toLowerCase().includes(q) || v.vn.toLowerCase().includes(q)).slice(0, 50);
+    res.innerHTML = hits.length ? `<div class="card">${hits.map(row).join('')}</div>` : '<p class="muted">Không tìm thấy.</p>';
+    bindSay(res);
+  };
 }

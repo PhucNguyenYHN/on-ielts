@@ -145,6 +145,8 @@ textarea { min-height: 50vh; line-height: 1.6; resize: vertical; }
 .grades { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .grades .btn { margin: 0; width: 100%; }
 
+details.card summary { cursor: pointer; padding: 4px 0; list-style-position: inside; }
+details.card[open] summary { margin-bottom: 6px; }
 ul.points { padding-left: 1.2rem; margin: 0.4rem 0; }
 ul.points li { margin: 0.35rem 0; }
 .ex { padding: 8px 0; border-bottom: 1px solid var(--line); }
