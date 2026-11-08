@@ -1,8 +1,41 @@
 import * as store from '../store.js';
 import { CONFIG } from '../config.js';
-import { esc, bi, streak, weekCount, today, loadContent } from '../util.js';
+import { esc, streak, weekCount, today, loadContent } from '../util.js';
 import { dueIds, learnedCount } from '../srs.js';
 import { recommendLesson, newWordsLeft, PLACEMENT_SECTIONS } from '../engine.js';
+import { icon } from '../icons.js';
+import { ring } from '../fx.js';
+
+const DAILY_MINUTES = 30; // mục tiêu phút học mỗi ngày cho vòng tiến độ
+
+// Câu động viên đổi theo ngày
+const QUOTES = [
+  'Mỗi ngày một chút, 5.5 sẽ đến sớm hơn em nghĩ.',
+  'Không cần hoàn hảo, chỉ cần đều đặn.',
+  'Hôm nay học 15 phút còn hơn mai học 2 tiếng.',
+  'Sai hôm nay là đúng ngày thi.',
+  'Từ nào em nhớ hôm nay là của em mãi mãi.',
+  'Dược sĩ giỏi tiếng Anh sẽ đọc được cả thế giới tài liệu.',
+  'Chậm mà chắc, chuỗi ngày học là vũ khí mạnh nhất.',
+];
+
+function greet() {
+  const h = new Date().getHours();
+  return h < 11 ? ['Chào buổi sáng', '☀️'] : h < 14 ? ['Chào buổi trưa', '🌤️'] : h < 18 ? ['Chào buổi chiều', '🌇'] : ['Chào buổi tối', '🌙'];
+}
+
+function streakNote(n) {
+  if (n >= 30) return `${n} ngày liền, phi thường! 🏆`;
+  if (n >= 7) return `${n} ngày liền, em đang tạo thói quen rất tốt 🔥`;
+  if (n >= 3) return `${n} ngày liên tục, giữ lửa nhé 🔥`;
+  if (n >= 1) return 'Đã học hôm nay, tuyệt!';
+  return 'Bắt đầu chuỗi ngày học từ hôm nay nhé';
+}
+
+const task = (skill, href, ic, title, meta, badge = '') => `<a class="card task" data-skill="${skill}" href="${href}">
+  <span class="chip">${icon(ic, 24)}</span>
+  <span class="body"><h3>${title} ${badge}</h3><div class="meta">${meta}</div></span>
+  <span class="go">${icon('arrow', 20)}</span></a>`;
 
 export default async function home(view) {
   const [vocab, grammar] = await Promise.all([loadContent('vocab'), loadContent('grammar')]);
@@ -14,51 +47,48 @@ export default async function home(view) {
   const pDone = PLACEMENT_SECTIONS.filter(k => s.placement[k]).length;
   const rec = recommendLesson(s, grammar);
   const mins = Math.round(s.days[today()] || 0);
+  const st = streak(s.days);
+  const learned = learnedCount(s.srs);
+  const [hello, emoji] = greet();
+  const quote = QUOTES[Math.floor(Date.now() / 864e5) % QUOTES.length];
 
   const cards = [];
   const graded = store.unseenGraded();
   if (graded.length) {
-    cards.push(`<a class="card" href="#/writing/${graded[0].ts}">
-      <h3>Bài viết đã có điểm <span class="badge warn">Mới</span></h3>
-      <div class="meta">${graded[0].score ? `Band ${esc(graded[0].score)}. ` : ''}Mở xem nhận xét và các lỗi cần sửa.</div></a>`);
+    cards.push(task('write', `#/writing/${graded[0].ts}`, 'pen', 'Bài viết đã có điểm', `${graded[0].score ? `Band ${esc(graded[0].score)}. ` : ''}Mở xem nhận xét và cách sửa lỗi.`, '<span class="badge warn">Mới</span>'));
   }
   if (pDone < PLACEMENT_SECTIONS.length) {
-    cards.push(`<a class="card" href="#/placement">
-      <h3>Kiểm tra đầu vào <span class="badge warn">Làm trước</span></h3>
-      <div class="meta">Đã xong ${pDone}/${PLACEMENT_SECTIONS.length} phần. Có thể chia làm nhiều buổi.</div></a>`);
+    cards.push(task('test', '#/placement', 'test', 'Kiểm tra đầu vào', `Đã xong ${pDone}/${PLACEMENT_SECTIONS.length} phần. Có thể chia làm nhiều buổi.`, '<span class="badge warn">Làm trước</span>'));
   }
   if (!s.device?.ok) {
-    cards.push(`<a class="card" href="#/mic">
-      <h3>Thử micro <span class="badge">1 phút</span></h3>
-      <div class="meta">Kiểm tra ghi âm Speaking trên máy này.</div></a>`);
+    cards.push(task('speak', '#/mic', 'mic', 'Thử micro', 'Kiểm tra ghi âm và nhận giọng nói trên máy này.', '<span class="badge">1 phút</span>'));
   }
-  cards.push(`<a class="card" href="#/vocab/review">
-    <h3>Ôn từ vựng <span class="badge">${due + fresh ? `${due + fresh} thẻ` : 'Xong'}</span></h3>
-    <div class="meta">${due} thẻ đến hạn ôn, ${fresh} từ mới hôm nay · đã thuộc ${learnedCount(s.srs)}/${vocab.length} từ</div></a>`);
-  if (rec) {
-    cards.push(`<a class="card" href="#/grammar/${esc(rec.lesson.id)}">
-      <h3>Ngữ pháp: ${esc(rec.lesson.title)}</h3>
-      <div class="meta">${esc(rec.why)} · khoảng 10 phút</div></a>`);
-  }
-  cards.push(`<a class="card" href="#/vocab/dictation">
-    <h3>Nghe và gõ chính tả <span class="badge">10 từ</span></h3>
-    <div class="meta">Luyện viết đúng chính tả khi điền từ ở bài Listening.</div></a>`);
-  cards.push(`<a class="card" href="#/speak">
-    <h3>Luyện nói <span class="badge">5 phút</span></h3>
-    <div class="meta">Đọc to 5 câu, máy nghe ra đúng chữ là phát âm đạt. Có cả câu hỏi Part 1 về bản thân em.</div></a>`);
+  cards.push(task('vocab', '#/vocab/review', 'cards', 'Ôn từ vựng',
+    `${due} thẻ đến hạn · ${fresh} từ mới hôm nay`, `<span class="badge">${due + fresh ? `${due + fresh} thẻ` : 'Xong ✓'}</span>`));
+  if (rec) cards.push(task('grammar', `#/grammar/${esc(rec.lesson.id)}`, 'grammar', `Ngữ pháp: ${esc(rec.lesson.title)}`, `${esc(rec.why)} · khoảng 10 phút`));
+  cards.push(task('listen', '#/vocab/dictation', 'headphones', 'Nghe và gõ chính tả', 'Luyện viết đúng chính tả khi điền từ ở bài Listening.', '<span class="badge">10 từ</span>'));
+  cards.push(task('speak', '#/speak', 'mic', 'Luyện nói', 'Đọc to 5 câu, máy nghe ra đúng chữ là phát âm đạt.', '<span class="badge">5 phút</span>'));
 
   view.innerHTML = `
     <div class="card hero">
-      <h3>${bi(`Chào ${CONFIG.learner}`, 'Welcome back')}</h3>
-      <div class="meta">Còn ${daysLeft} ngày đến kỳ thi dự kiến (${exam.toLocaleDateString('vi-VN')}). Mốc 1: 5.5.</div>
+      <div class="hero-top">
+        <div><h2>${hello}, ${esc(CONFIG.learner)} ${emoji}</h2><div class="meta" style="margin-top:4px">${quote}</div></div>
+        <div class="count"><b>${daysLeft}</b><span>ngày đến kỳ thi</span></div>
+      </div>
+      <div class="road"><span class="dot now">4.5</span><span class="line"></span><span class="dot">5.0</span><span class="line"></span><span class="dot">5.5 🎯</span><span class="line"></span><span class="dot">6.5</span></div>
+    </div>
+    <div class="card today">
+      ${ring(mins / DAILY_MINUTES, { size: 72, stroke: 8, label: `${mins}′` })}
+      <div class="body"><h3>${mins >= DAILY_MINUTES ? 'Đủ mục tiêu hôm nay! 🎉' : `Hôm nay: ${mins}/${DAILY_MINUTES} phút`}</h3>
+        <div class="meta">${streakNote(st)}</div></div>
     </div>
     <div class="stats">
-      <div class="stat"><b>${streak(s.days)}</b><span>ngày liên tục</span></div>
-      <div class="stat"><b>${weekCount(s.days, CONFIG.sessionMinutes)}/${CONFIG.weeklyGoal}</b><span>buổi tuần này</span></div>
-      <div class="stat"><b>${mins}</b><span>phút hôm nay</span></div>
+      <div class="stat fire">${icon('flame', 22)}<b>${st}</b><span>ngày liên tục</span></div>
+      <div class="stat" data-skill="grammar">${icon('calendar', 22)}<b>${weekCount(s.days, CONFIG.sessionMinutes)}/${CONFIG.weeklyGoal}</b><span>buổi tuần này</span></div>
+      <div class="stat" data-skill="vocab">${icon('cards', 22)}<b>${learned}</b><span>từ đã thuộc</span></div>
     </div>
-    <h2>${bi('Việc hôm nay', "Today's plan")}</h2>
+    <h2>Việc hôm nay <span class="en">Today's plan</span></h2>
     ${cards.join('')}
-    <p><a href="#/writing">Xem tất cả bài viết đã nộp →</a></p>
-    <p class="muted small">Buổi ngắn 10–15 phút: ôn từ vựng và nghe–gõ. Buổi dài 45–60 phút: làm thêm một bài ngữ pháp hoặc một phần kiểm tra. Học từ ${CONFIG.sessionMinutes} phút trong ngày thì tính là một buổi.</p>`;
+    <a class="card task" href="#/writing" data-skill="write"><span class="chip">${icon('book', 24)}</span><span class="body"><h3>Bài viết của em</h3><div class="meta">Xem điểm và nhận xét các bài Writing đã nộp.</div></span><span class="go">${icon('arrow', 20)}</span></a>
+    <p class="muted small" style="text-align:center;margin-top:16px">Buổi ngắn 10–15 phút: ôn từ và nghe–gõ. Buổi dài 45–60 phút: thêm ngữ pháp hoặc luyện nói.</p>`;
 }

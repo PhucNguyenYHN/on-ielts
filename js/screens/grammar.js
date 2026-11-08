@@ -3,6 +3,8 @@ import { esc, bi, shuffle, loadContent } from '../util.js';
 import { recommendLesson } from '../engine.js';
 import { bindSay } from '../tts.js';
 import { runQuiz } from '../quiz.js';
+import { resultCard, fixBox, fillBlank, tips } from '../coach.js';
+import { confetti } from '../fx.js';
 
 export default async function grammarScreen(view, [id, mode]) {
   const lessons = await loadContent('grammar');
@@ -45,15 +47,22 @@ function practice(view, l) {
   });
   const text = shuffle(l.exercises.filter(x => x.type === 'text'));
   runQuiz(view, [...mcq, ...text], {
-    title: l.title,
+    title: l.title, tag: l.tag,
     onAnswer: r => store.logAttempt({ item: l.id, skill: 'G', type: l.tag, correct: r.correct, ms: r.ms, detail: r.correct ? '' : String(r.given) }),
-    onDone: res => {
+    onDone: async res => {
       const pct = Math.round((res.filter(r => r.correct).length / res.length) * 100);
       store.update(s => { s.grammar[l.id] = Math.max(s.grammar[l.id] ?? 0, pct); });
-      view.innerHTML = `<h1>${bi('Kết quả', 'Result')}</h1>
-        <div class="card"><h3>${l.title}: ${pct}%</h3>
-        <p class="meta">${pct >= 80 ? 'Đạt. App sẽ chuyển sang bài tiếp theo.' : 'Chưa đạt 80%. Đọc lại phần giải thích rồi làm lại; app sẽ gợi ý bài này cho tới khi đạt.'}</p>
-        <div class="row"><a class="btn" href="#/grammar/${esc(l.id)}">Xem lại bài</a><a class="btn ghost" href="#/grammar">Danh sách bài</a></div></div>`;
+      const T = await tips();
+      const wrong = res.filter(r => !r.correct);
+      const r = resultCard(pct, `<p class="meta">${l.title}: ${pct >= 80 ? 'đạt, app sẽ chuyển sang bài tiếp theo.' : 'chưa đạt 80%. Xem lại các câu sai bên dưới rồi làm lại nhé.'}</p>
+        <div class="row" style="justify-content:center;margin-top:10px">${pct >= 80 ? '<a class="btn" href="#/grammar">Bài tiếp theo</a>' : `<a class="btn" href="#/grammar/${esc(l.id)}/practice">Làm lại</a>`}<a class="btn ghost" href="#/grammar/${esc(l.id)}">Xem lại lý thuyết</a></div>`);
+      view.innerHTML = `<h1>${bi('Kết quả', 'Result')}</h1>${r.html}
+        ${wrong.length ? `<h2>${bi('Xem lại câu sai', 'Review your mistakes')}</h2><div class="card">${wrong.map(x => {
+          const it = x.item, isMcq = it.type !== 'text';
+          const right = isMcq ? it.options[it.answer] : it.answer[0];
+          return `<div class="review-item"><b>${esc(it.q)}</b>${fixBox({ given: isMcq ? it.options[x.given] : x.given, right, explain: it.explain, tag: l.tag, sentence: isMcq ? fillBlank(it.q, right) : '' }, T)}</div>`;
+        }).join('')}</div>` : ''}`;
+      if (r.party) confetti();
     },
   });
 }

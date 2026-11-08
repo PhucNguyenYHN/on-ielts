@@ -5,6 +5,9 @@ import { toBand, PLACEMENT_SECTIONS } from '../engine.js';
 import { runQuiz } from '../quiz.js';
 import { say, stop as stopTTS } from '../tts.js';
 import { recorderWidget, blobToBase64 } from '../recorder.js';
+import { fixBox, fillBlank, tips } from '../coach.js';
+import { confetti } from '../fx.js';
+let T = {};
 
 const NAMES = {
   grammar: ['Ngữ pháp', 'Grammar', '30 câu trắc nghiệm, khoảng 15 phút'],
@@ -17,6 +20,7 @@ const NAMES = {
 
 export default async function placementScreen(view, [section]) {
   const data = await loadContent('placement');
+  T = await tips();
   const run = { grammar, vocab, listening, reading, writing, speaking }[section];
   if (run) return run(view, data);
   overview(view);
@@ -63,12 +67,14 @@ function intro(view, key, body, onStart) {
   view.querySelector('[data-start]').onclick = onStart;
 }
 
+// Mỗi câu sai: em chọn gì, đúng là gì, vì sao, mẹo nhớ theo dạng câu
 function reviewTable(rows) {
-  return `<table class="res"><tr><th>Câu</th><th>Em chọn</th><th>Đáp án</th></tr>${rows.map(r =>
-    `<tr><td>${esc(r.q)}</td><td>${esc(r.given)}</td><td><b>${esc(r.right)}</b></td></tr>`).join('')}</table>`;
+  return `<h3 style="margin-top:14px">Xem lại câu sai</h3>${rows.map(r =>
+    `<div class="review-item"><b>${esc(r.q)}</b>${fixBox({ given: r.given, right: r.right, tag: r.tag, sentence: r.q.includes('___') ? fillBlank(r.q.replace(/^\d+\.\s*/, ''), r.right) : '' }, T)}</div>`).join('')}`;
 }
 
 function done(view, key, html) {
+  confetti(50);
   view.innerHTML = `<h1>${bi(`Xong phần ${NAMES[key][0]}`, 'Section complete')}</h1>
     <div class="card">${html}<div class="row" style="margin-top:10px"><a class="btn" href="#/placement">Các phần khác</a><a class="btn ghost" href="#/">Về Hôm nay</a></div></div>`;
 }
@@ -85,7 +91,7 @@ function grammar(view, data) {
         const wrong = res.filter(r => !r.correct);
         saveSection('grammar', { score, total: res.length, wrongTags: wrong.map(r => r.item.tag) });
         done(view, 'grammar', `<h3>Đúng ${score}/${res.length}</h3>
-          ${wrong.length ? reviewTable(wrong.map(r => ({ q: r.item.q, given: r.item.options[r.given], right: r.item.options[r.item.answer] }))) : ''}`);
+          ${wrong.length ? reviewTable(wrong.map(r => ({ q: r.item.q, given: r.item.options[r.given], right: r.item.options[r.item.answer], tag: r.item.tag }))) : ''}`);
       },
     });
   });
@@ -163,7 +169,7 @@ function listening(view, data) {
       const box = view.querySelector(`.qitem[data-i="${i}"]`);
       const val = box.querySelector('input').value.trim();
       const ok = !!val && checkText(val, q.answer);
-      if (ok) score++; else wrong.push({ q: `${i + 1}. ${q.before} ____ ${q.after || ''}`, given: val || '(bỏ trống)', right: q.answer[0] });
+      if (ok) score++; else wrong.push({ q: `${i + 1}. ${q.before} ___ ${q.after || ''}`, given: val || '(bỏ trống)', right: q.answer[0], tag: q.tag });
       store.logAttempt({ item: `PL-L${i + 1}`, skill: 'L', type: q.tag, correct: ok, detail: ok ? '' : val });
     });
     saveSection('listening', { score, total: L.questions.length });
@@ -201,7 +207,7 @@ function reading(view, data) {
         const box = view.querySelector(`.qitem[data-i="${i}"]`);
         const val = (box.querySelector('select, input').value || '').trim();
         const ok = q.kind === 'tfng' ? val === q.answer : !!val && checkText(val, q.answer);
-        if (ok) score++; else wrong.push({ q: `${i + 1}. ${q.q}`, given: val || '(bỏ trống)', right: q.kind === 'tfng' ? q.answer : q.answer[0] });
+        if (ok) score++; else wrong.push({ q: `${i + 1}. ${q.q}`, given: val || '(bỏ trống)', right: q.kind === 'tfng' ? q.answer : q.answer[0], tag: q.kind === 'tfng' ? 'R-tfng' : 'R-sentence' });
         store.logAttempt({ item: `PL-R${i + 1}`, skill: 'R', type: q.kind === 'tfng' ? 'R-tfng' : 'R-sentence', correct: ok, detail: ok ? '' : val });
       });
       saveSection('reading', { score, total: qs.length, minutes });

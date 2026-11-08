@@ -6,5 +6,5 @@ export const CONFIG = {
   examDate: '2027-07-15',       // dự kiến, chưa đăng ký
   weeklyGoal: 4,                // số buổi mỗi tuần
   sessionMinutes: 10,           // học từ 10 phút trong ngày thì tính là một buổi
-  newWordsPerDay: 30,
+  newWordsPerDay: 15,
 };

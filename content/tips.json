@@ -1,0 +1,117 @@
+{
+  "G-present-simple": {
+    "rule": "Hiện tại đơn dùng cho thói quen, sự thật, lịch cố định. Chủ ngữ he/she/it hoặc danh từ số ít thì động từ thêm -s/-es. Câu hỏi và phủ định dùng do/does + động từ nguyên mẫu.",
+    "tip": "Nhớ câu \"Ông Hai, Bà Sáu, Cái Ấy thích đeo S\": He, She, It thì động từ đeo đuôi -s. Đã có does thì động từ phía sau tháo -s ra (does she go, không phải does she goes).",
+    "trap": "Hay quên -s với chủ ngữ là danh từ số ít, ví dụ My brother live → My brother lives."
+  },
+  "G-past-simple": {
+    "rule": "Quá khứ đơn dùng cho việc đã xong ở thời điểm xác định trong quá khứ (yesterday, last week, in 2020, ago). Động từ có quy tắc thêm -ed, bất quy tắc dùng cột 2.",
+    "tip": "Thấy yesterday / last / ago / in + năm đã qua → nghĩ ngay tới quá khứ đơn. Câu hỏi và phủ định dùng did, động từ sau did trở về nguyên mẫu (did you go, không phải did you went).",
+    "trap": "Dùng cả did và động từ -ed, ví dụ didn't watched → didn't watch."
+  },
+  "G-present-continuous": {
+    "rule": "Hiện tại tiếp diễn: am/is/are + V-ing, cho việc đang xảy ra lúc nói hoặc kế hoạch gần đã sắp xếp.",
+    "tip": "Có now, at the moment, Look!, Listen! → dùng be + V-ing. Không dùng -ing với động từ chỉ trạng thái như like, know, want, need.",
+    "trap": "Thiếu be: I studying → I am studying."
+  },
+  "G-present-perfect": {
+    "rule": "Hiện tại hoàn thành: have/has + V3, nối quá khứ với hiện tại (since, for, already, yet, ever, never, just), không nói rõ thời điểm.",
+    "tip": "Since + mốc thời gian (since 2020), for + khoảng thời gian (for 3 years). Đã có thời điểm cụ thể (yesterday, in 2019) thì quay về quá khứ đơn.",
+    "trap": "I have visited Hue last year → I visited Hue last year."
+  },
+  "G-tenses": {
+    "rule": "Chọn thì theo dấu hiệu thời gian trong câu: thói quen → hiện tại đơn; đang xảy ra → tiếp diễn; đã xong, có thời điểm → quá khứ đơn; kéo dài đến nay → hiện tại hoàn thành.",
+    "tip": "Gạch chân từ chỉ thời gian trước rồi mới chọn đáp án. Không có dấu hiệu thì đọc cả câu để xem hành động đã xong hay chưa.",
+    "trap": "Chọn theo cảm giác mà không tìm dấu hiệu thời gian."
+  },
+  "G-agreement": {
+    "rule": "Động từ chia theo chủ ngữ chính. Chủ ngữ số ít → is/has/V-s; số nhiều → are/have/V nguyên mẫu. Everyone, each, every + danh từ, danh từ không đếm được là số ít.",
+    "tip": "Tìm chủ ngữ thật bằng cách bỏ cụm giới từ ở giữa: The number (of students) is…; A lot (of people) are… Mẹo: \"the number\" là một con số nên số ít, \"a number of\" là nhiều nên số nhiều.",
+    "trap": "Chia theo danh từ đứng gần động từ nhất: The list of items are → The list of items is."
+  },
+  "G-nouns": {
+    "rule": "Danh từ đếm được số nhiều phải thêm -s/-es (two books). Danh từ không đếm được (information, advice, money, homework, equipment) không thêm -s và đi với much/little.",
+    "tip": "Hỏi \"đếm 1, 2, 3 được không?\": được thì nhớ thêm -s khi số nhiều. Sau many, a few, several, two/three… luôn có -s.",
+    "trap": "many student → many students; informations → information."
+  },
+  "G-articles": {
+    "rule": "a/an cho danh từ số ít đếm được nhắc lần đầu (an trước nguyên âm theo cách đọc: an hour, a university). the cho thứ đã biết hoặc duy nhất (the sun, the internet).",
+    "tip": "Nghe âm đầu chứ không nhìn chữ: an hour (h câm), a uniform (đọc \"ju\"). Nói chung chung về số nhiều thì không cần mạo từ: Students need sleep.",
+    "trap": "I am student → I am a student."
+  },
+  "G-prepositions": {
+    "rule": "in + tháng/năm/mùa/thành phố; on + ngày/thứ; at + giờ/địa điểm cụ thể. Nhiều động từ và tính từ đi kèm giới từ cố định: interested in, good at, depend on.",
+    "tip": "Mẹo tam giác thời gian: IN (rộng: năm, tháng) > ON (ngày) > AT (điểm: giờ). Học động từ kèm giới từ thành một cụm, đừng học riêng lẻ.",
+    "trap": "on 2020 → in 2020; at Monday → on Monday."
+  },
+  "G-comparison": {
+    "rule": "Tính từ ngắn: -er than / the -est. Tính từ dài: more … than / the most. Bất quy tắc: good → better → best, bad → worse → worst.",
+    "tip": "Đếm âm tiết: 1 âm tiết → -er (cheaper); 3 âm tiết trở lên → more (more expensive). Không dùng cả hai: more cheaper → cheaper.",
+    "trap": "more better → better; the most cheap → the cheapest."
+  },
+  "G-conditional": {
+    "rule": "Loại 1 (có thể xảy ra): If + hiện tại đơn, will + V. Loại 2 (không có thật ở hiện tại): If + quá khứ đơn, would + V. Loại 3 (không có thật ở quá khứ): If + had V3, would have V3.",
+    "tip": "Mệnh đề If lùi một thì so với thực tế: thật ở hiện tại → loại 1; tưởng tượng → lùi xuống quá khứ (loại 2). Sau If không dùng will. Với loại 2, \"If I were you\" dùng were cho mọi ngôi.",
+    "trap": "If it will rain, … → If it rains, …"
+  },
+  "G-passive": {
+    "rule": "Bị động: be + V3. Dùng khi người làm không quan trọng hoặc không biết. Thì thể hiện ở động từ be: is made, was built, has been done.",
+    "tip": "Hỏi \"chủ ngữ tự làm hay bị làm?\". Thuốc không tự kê đơn → The medicine is prescribed. Process trong Writing Task 1 hầu như toàn bị động.",
+    "trap": "Quên be: The bridge built in 2010 → The bridge was built in 2010."
+  },
+  "G-gerund": {
+    "rule": "Sau giới từ và sau enjoy, avoid, finish, mind, suggest, consider → V-ing. Sau want, decide, plan, hope, need, would like → to + V.",
+    "tip": "Nhóm \"thích, tránh, xong\" (enjoy, avoid, finish) đi với -ing; nhóm \"muốn, định\" (want, plan, decide) hướng tới tương lai nên đi với to + V.",
+    "trap": "I enjoy to travel → I enjoy travelling."
+  },
+  "G-relative": {
+    "rule": "who cho người, which cho vật, that cho cả hai (mệnh đề xác định), whose chỉ sở hữu, where chỉ nơi chốn.",
+    "tip": "Nhìn danh từ đứng ngay trước chỗ trống: người → who; vật → which; nơi → where (sau where là một câu đủ chủ ngữ, động từ). Sau dấu phẩy không dùng that.",
+    "trap": "The man which I met → The man who I met."
+  },
+  "G-linking": {
+    "rule": "Nối ý giống nhau: and, moreover, in addition. Đối lập: but, however, although. Nguyên nhân: because (+ câu), because of / due to (+ danh từ). Kết quả: so, therefore, as a result.",
+    "tip": "Although và but không đi cùng nhau trong một câu. Because + câu đầy đủ; because of + danh từ (because of the rain).",
+    "trap": "Although it rained, but we went → Although it rained, we went."
+  },
+  "G-advanced": {
+    "rule": "Câu phức nâng cao: mệnh đề danh từ, đảo ngữ, rút gọn mệnh đề.",
+    "tip": "Ở mốc 5.5 chưa cần dùng nhiều. Ưu tiên câu đơn đúng và câu ghép rõ ràng trước.",
+    "trap": "Cố dùng cấu trúc khó rồi sai, mất điểm ngữ pháp."
+  },
+  "L-detail": {
+    "rule": "Câu hỏi chi tiết: nghe đúng từ, số, tên cần điền vào phiếu.",
+    "tip": "Trước khi nghe, đoán loại từ cần điền: số, tên, ngày hay danh từ. Viết ngắn trước, chép lại cho đúng sau.",
+    "trap": "Viết cả câu dài khi đề yêu cầu \"ONE WORD AND/OR A NUMBER\"."
+  },
+  "L-distractor": {
+    "rule": "Người nói hay đưa thông tin rồi đổi ý. Đáp án là thông tin cuối cùng được xác nhận.",
+    "tip": "Nghe kỹ các từ báo đổi ý: actually, sorry, I mean, no wait, oh, it's changed. Thấy những từ này thì gạch đáp án vừa ghi và chờ thông tin mới.",
+    "trap": "Ghi ngay con số nghe được đầu tiên."
+  },
+  "L-spelling": {
+    "rule": "Chính tả phải đúng 100%. Sai một chữ cái là mất điểm câu đó.",
+    "tip": "Khi nghe đánh vần, viết từng chữ cái ra nháp. Luyện bảng chữ cái tiếng Anh, nhất là các chữ dễ nhầm: A/E/I, G/J, B/V, M/N.",
+    "trap": "Thiếu -s số nhiều hoặc thiếu chữ cái đôi."
+  },
+  "L-number": {
+    "rule": "Số điện thoại, giá, ngày tháng, mã bưu điện phải chép chính xác.",
+    "tip": "Phân biệt thirteen (nhấn cuối: thir-TEEN) và thirty (nhấn đầu: THIR-ty). \"Double six\" nghĩa là 66; \"oh\" là số 0.",
+    "trap": "Nghe nhầm -teen và -ty."
+  },
+  "R-tfng": {
+    "rule": "TRUE: bài nói giống câu hỏi. FALSE: bài nói ngược lại. NOT GIVEN: bài không đề cập, không thể kết luận.",
+    "tip": "Hỏi hai câu: \"Bài có nói đến ý này không?\" Không → NOT GIVEN. Có → \"Nói giống hay ngược?\" Đừng dùng hiểu biết riêng, chỉ dựa vào bài.",
+    "trap": "Chọn FALSE khi bài chỉ đơn giản là không nhắc tới (đáp án đúng là NOT GIVEN)."
+  },
+  "R-sentence": {
+    "rule": "Điền từ lấy nguyên văn trong bài, đúng số từ cho phép và đúng ngữ pháp của câu.",
+    "tip": "Đọc câu hỏi, đoán loại từ cần điền (danh từ số ít hay số nhiều?), tìm từ đồng nghĩa trong bài rồi chép đúng chính tả.",
+    "trap": "Chép thiếu -s hoặc viết sai chính tả (trafic → traffic)."
+  },
+  "V-recall": {
+    "rule": "Nhớ nghĩa và cách dùng của từ.",
+    "tip": "Đặt một câu về chính em với từ mới (ví dụ về ngành Dược, quê Hà Nam). Từ gắn với bản thân thì nhớ lâu hơn nhiều.",
+    "trap": "Chỉ học nghĩa mà không học câu ví dụ."
+  }
+}

@@ -5,6 +5,18 @@ import { review, dueIds, learnedCount } from '../srs.js';
 import { newWordsLeft } from '../engine.js';
 import { say, bindSay } from '../tts.js';
 import { runQuiz } from '../quiz.js';
+import { resultCard, spellingDiff } from '../coach.js';
+import { confetti } from '../fx.js';
+
+// Cách nhớ tự động từ tiền tố, hậu tố khi từ chưa có mẹo soạn sẵn
+const AFFIX = [[/^un/, 'un- = không'], [/^dis/, 'dis- = không, ngược lại'], [/^re/, 're- = lại, lần nữa'], [/^in(?=[^aeiou])|^im/, 'in-/im- = không hoặc vào trong'], [/^pre/, 'pre- = trước'], [/^over/, 'over- = quá mức'], [/^under/, 'under- = dưới, chưa đủ'], [/^de/, 'de- = xuống, bỏ đi'],
+  [/tion$|sion$/, '-tion/-sion: đuôi danh từ'], [/ment$/, '-ment: đuôi danh từ'], [/ness$/, '-ness: đuôi danh từ chỉ tính chất'], [/ity$/, '-ity: đuôi danh từ'], [/ful$/, '-ful = đầy, có nhiều'], [/less$/, '-less = không có'], [/able$|ible$/, '-able/-ible = có thể'], [/ly$/, '-ly: đuôi trạng từ'], [/ist$/, '-ist: người làm nghề'], [/ee$/, '-ee: người được nhận'], [/(er|or)$/, '-er/-or: người hoặc vật làm việc gì']];
+function autoTip(v) {
+  const w = v.w.toLowerCase();
+  if (w.includes(' ')) return 'Học cả cụm, đừng tách từng chữ. Đặt một câu về chính em với cụm này.';
+  const hits = AFFIX.filter(([re]) => re.test(w)).map(([, t]) => t).slice(0, 2);
+  return (hits.length ? 'Phân tích từ: ' + hits.join('; ') + '. ' : '') + 'Đọc to câu ví dụ hai lần rồi tự đặt một câu về ngành Dược hoặc cuộc sống của em.';
+}
 
 export default async function vocabScreen(view, [mode]) {
   const vocab = await loadContent('vocab');
@@ -67,14 +79,16 @@ function cards(view, vocab) {
         <div class="back" hidden>
           <div class="vn">${esc(v.vn)}</div>
           <p>${esc(v.ex)} <button class="say" data-say="${esc(v.ex)}" data-lang="${accent()}">🔊</button></p>
+          <div class="memo"><b>💡 Cách nhớ</b><div>${esc(v.m || autoTip(v))}</div></div>
         </div>
       </div>
       <button class="btn block" data-flip>Lật thẻ · Show meaning</button>
       <div class="grades" hidden>
-        <button class="btn danger" data-g="0">Quên</button>
-        <button class="btn ghost" data-g="1">Khó</button>
-        <button class="btn" data-g="2">Nhớ</button>
-      </div>`;
+        <button class="btn danger" data-g="0">😵 Quên</button>
+        <button class="btn ghost" data-g="1">🤔 Khó</button>
+        <button class="btn" data-g="2">😎 Nhớ</button>
+      </div>
+      <p class="muted small" style="text-align:center">${remembered ? `Đã nhớ ${remembered} thẻ trong buổi này` : 'Lật thẻ, tự chấm thật lòng để app nhắc đúng lúc'}</p>`;
     bindSay(view);
     say(v.w, { lang: accent() });
     view.querySelector('[data-flip]').onclick = e => {
@@ -102,10 +116,11 @@ function cards(view, vocab) {
   }
 
   function finish() {
-    view.innerHTML = `<h1>${bi('Xong buổi ôn', 'Done')}</h1>
-      <div class="card"><h3>Nhớ ${remembered}/${reviewed} lượt</h3>
-      <p class="meta">Thẻ chấm Quên hoặc Khó sẽ quay lại sớm hơn. Mai mở app để ôn đúng hạn.</p>
-      <a class="btn" href="#/vocab/dictation">Nghe và gõ chính tả</a><a class="btn ghost" href="#/">Về Hôm nay</a></div>`;
+    const pct = reviewed ? Math.round((remembered / reviewed) * 100) : 0;
+    const r = resultCard(pct, `<p class="meta">Nhớ ${remembered}/${reviewed} lượt. Thẻ chấm Quên hoặc Khó sẽ quay lại sớm hơn, mai mở app để ôn đúng hạn.</p>
+      <div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/vocab/dictation">Nghe và gõ chính tả</a><a class="btn ghost" href="#/">Về Hôm nay</a></div>`);
+    view.innerHTML = `<h1>${bi('Xong buổi ôn', 'Done')}</h1>${r.html}`;
+    confetti(r.party ? 100 : 40);
   }
 
   show();
@@ -126,10 +141,11 @@ function dictation(view, vocab) {
     onAnswer: r => store.logAttempt({ item: r.item.answer[0], skill: 'L', type: 'L-spelling', correct: r.correct, ms: r.ms, detail: r.correct ? '' : r.given }),
     onDone: res => {
       const wrong = res.filter(r => !r.correct);
-      view.innerHTML = `<h1>${bi('Kết quả nghe – gõ', 'Dictation result')}</h1>
-        <div class="card"><h3>Đúng ${res.length - wrong.length}/${res.length}</h3>
-        ${wrong.length ? `<table class="res"><tr><th>Em gõ</th><th>Đúng là</th></tr>${wrong.map(r => `<tr><td>${esc(r.given)}</td><td><b>${esc(r.item.answer[0])}</b></td></tr>`).join('')}</table>` : '<p class="meta">Không sai từ nào.</p>'}
-        <div class="row" style="margin-top:10px"><a class="btn" href="#/vocab/dictation" data-again>Làm lượt khác</a><a class="btn ghost" href="#/">Về Hôm nay</a></div></div>`;
+      const pct = Math.round(((res.length - wrong.length) / res.length) * 100);
+      const r = resultCard(pct, `<div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/vocab/dictation" data-again>Làm lượt khác</a><a class="btn ghost" href="#/">Về Hôm nay</a></div>`);
+      view.innerHTML = `<h1>${bi('Kết quả nghe – gõ', 'Dictation result')}</h1>${r.html}
+        ${wrong.length ? `<h2>${bi('Sửa các từ gõ sai', 'Fix your spelling')}</h2><div class="card">${wrong.map(x => `<div class="review-item"><b>${esc(x.item.answer[0])}</b> <span class="muted small">${esc(x.item.explain)}</span>${spellingDiff(x.given, x.item.answer[0])}</div>`).join('')}</div>` : ''}`;
+      if (r.party) confetti();
       view.querySelector('[data-again]').onclick = e => { e.preventDefault(); dictation(view, vocab); };
     },
   });
