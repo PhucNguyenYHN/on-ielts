@@ -71,4 +71,4 @@ export function countdown(el, seconds, onEnd) {
 }
 
 const cache = {};
-export const loadContent = name => (cache[name] ??= fetch(`content/${name}.json`).then(r => r.json()));
+export const loadContent = name => (cache[name] ??= fetch(`content/${name}.json`, { cache: "no-cache" }).then(r => r.json()));
