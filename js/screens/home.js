@@ -63,10 +63,12 @@ export default async function home(view) {
   if (!s.device?.ok) {
     cards.push(task('speak', '#/mic', 'mic', 'Thử micro', 'Kiểm tra ghi âm và nhận giọng nói trên máy này.', '<span class="badge">1 phút</span>'));
   }
-  cards.push(task('vocab', '#/vocab/review', 'cards', 'Ôn từ vựng',
-    `${due} thẻ đến hạn · ${fresh} từ mới hôm nay`, `<span class="badge">${due + fresh ? `${due + fresh} thẻ` : 'Xong ✓'}</span>`));
+  cards.push(task('vocab', '#/vocab/learn', 'book', 'Học từ mới',
+    fresh ? 'Xem từ kèm nghĩa và cách nhớ, rồi chọn nghĩa và viết lại từ.' : 'Hôm nay đã học đủ từ mới.', `<span class="badge">${fresh ? `${fresh} từ` : 'Xong ✓'}</span>`));
+  if (due) cards.push(task('vocab', '#/vocab/review', 'cards', 'Ôn thẻ đến hạn', 'Lật thẻ nhớ lại nghĩa các từ đã học.', `<span class="badge">${due} thẻ</span>`));
+  const canDictate = Object.values(s.srs).filter(c => c.reps >= 2).length >= 5;
   if (rec) cards.push(task('grammar', `#/grammar/${esc(rec.lesson.id)}`, 'grammar', `Ngữ pháp: ${esc(rec.lesson.title)}`, `${esc(rec.why)} · khoảng 10 phút`));
-  cards.push(task('listen', '#/vocab/dictation', 'headphones', 'Nghe và gõ chính tả', 'Luyện viết đúng chính tả khi điền từ ở bài Listening.', '<span class="badge">10 từ</span>'));
+  if (canDictate) cards.push(task('listen', '#/vocab/dictation', 'headphones', 'Nghe và gõ chính tả', 'Nghe từ đã ôn rồi viết lại, luyện chính tả cho Listening.', '<span class="badge">10 từ</span>'));
   cards.push(task('speak', '#/speak', 'mic', 'Luyện nói', 'Đọc to 5 câu, máy nghe ra đúng chữ là phát âm đạt.', '<span class="badge">5 phút</span>'));
 
   view.innerHTML = `

@@ -20,6 +20,7 @@ function autoTip(v) {
 
 export default async function vocabScreen(view, [mode]) {
   const vocab = await loadContent('vocab');
+  if (mode === 'learn') return learn(view, vocab);
   if (mode === 'review') return cards(view, vocab);
   if (mode === 'dictation') return dictation(view, vocab);
   if (mode === 'list') return list(view, vocab);
@@ -37,10 +38,12 @@ function menu(view, vocab) {
       <div class="stat"><b>${due}</b><span>đến hạn ôn</span></div>
       <div class="stat"><b>${vocab.length}</b><span>tổng số từ</span></div>
     </div>
-    <a class="card" href="#/vocab/review"><h3>Ôn thẻ <span class="badge">${due + fresh} thẻ</span></h3>
-      <div class="meta">Thẻ đến hạn ôn trước, sau đó ${fresh} từ mới. Tự chấm: Quên, Khó hoặc Nhớ.</div></a>
-    <a class="card" href="#/vocab/dictation"><h3>Nghe và gõ chính tả</h3>
-      <div class="meta">Nghe 10 từ đã học rồi gõ lại. Dùng để sửa lỗi chính tả và thiếu "s" khi làm Listening.</div></a>
+    <a class="card" href="#/vocab/learn"><h3>1. Học từ mới <span class="badge">${fresh ? fresh + ' từ' : 'Xong ✓'}</span></h3>
+      <div class="meta">Xem từ kèm nghĩa và cách nhớ, rồi luyện chọn nghĩa và viết lại từ.</div></a>
+    <a class="card" href="#/vocab/review"><h3>2. Ôn thẻ đến hạn <span class="badge">${due} thẻ</span></h3>
+      <div class="meta">Lật thẻ nhớ lại nghĩa, tự chấm Quên, Khó hoặc Nhớ.</div></a>
+    <a class="card" href="#/vocab/dictation"><h3>3. Nghe và gõ chính tả</h3>
+      <div class="meta">Nghe 10 từ em đã ôn ít nhất hai lần rồi gõ lại. Dùng để sửa lỗi chính tả và thiếu "s" khi làm Listening.</div></a>
     <a class="card" href="#/vocab/list"><h3>Danh sách từ theo chủ đề</h3>
       <div class="meta">Xem nghĩa và nghe phát âm giọng Anh hoặc Mỹ.</div></a>`;
 }
@@ -49,17 +52,15 @@ function cards(view, vocab) {
   const byW = Object.fromEntries(vocab.map(v => [v.w, v]));
   const s0 = store.get();
   const due = shuffle(dueIds(s0.srs).filter(w => byW[w])).slice(0, 40);
-  const nNew = newWordsLeft(s0, CONFIG.newWordsPerDay);
-  const fresh = vocab.filter(v => !s0.srs[v.w]).slice(0, nNew).map(v => v.w);
-  const q = [...due, ...fresh];
+  const q = [...due];
   const requeued = new Set();
   let remembered = 0, reviewed = 0;
   const accent = () => store.get().prefs.accent;
 
   if (!q.length) {
     view.innerHTML = `<h1>${bi('Ôn thẻ', 'Review')}</h1>
-      <div class="card"><h3>Hôm nay đã ôn xong</h3><p class="meta">Không còn thẻ đến hạn và đã học đủ ${CONFIG.newWordsPerDay} từ mới. Có thể luyện nghe–gõ để ôn thêm.</p>
-      <a class="btn" href="#/vocab/dictation">Nghe và gõ chính tả</a></div>`;
+      <div class="card"><h3>Không còn thẻ đến hạn 🎉</h3><p class="meta">Thẻ đã học sẽ quay lại đúng ngày cần ôn.</p>
+      <a class="btn" href="#/vocab/learn">Học từ mới</a><a class="btn ghost" href="#/vocab/dictation">Nghe và gõ chính tả</a></div>`;
     return;
   }
 
@@ -126,13 +127,109 @@ function cards(view, vocab) {
   show();
 }
 
+// Học từ mới theo 3 bước: xem (từ + nghĩa + cách nhớ) → chọn nghĩa → viết lại từ từ nghĩa.
+// Xong mới đưa vào lịch ôn: đúng cả hai bước = Nhớ, đúng một = Khó, sai cả hai = Quên (gặp lại sớm).
+function learn(view, vocab) {
+  const s0 = store.get();
+  const accent = () => store.get().prefs.accent;
+  const words = vocab.filter(v => !s0.srs[v.w]).slice(0, newWordsLeft(s0, CONFIG.newWordsPerDay));
+  if (!words.length) {
+    view.innerHTML = `<h1>${bi('Học từ mới', 'New words')}</h1><div class="card result-big"><h3>Hôm nay đã học đủ ${CONFIG.newWordsPerDay} từ mới 🎉</h3>
+      <p class="meta">Mai quay lại học tiếp nhé. Giờ có thể ôn thẻ đến hạn.</p><a class="btn" href="#/vocab/review">Ôn thẻ</a></div>`;
+    return;
+  }
+  const score = Object.fromEntries(words.map(v => [v.w, 0]));
+  let i = 0;
+
+  // Bước 1: xem từng từ, nghĩa hiện sẵn
+  function study() {
+    const v = words[i];
+    view.innerHTML = `<div class="row" style="justify-content:space-between"><div class="qhead muted small">Bước 1/3 · Xem từ mới · ${i + 1}/${words.length}</div><span class="badge">Từ mới</span></div>
+      <div class="bar"><i style="width:${(i / words.length) * 100}%"></i></div>
+      <div class="card flash">
+        <div class="word">${esc(v.w)}</div>
+        <div class="pos">${esc(v.p)} · ${esc(v.t)}${v.cefr ? ` · <span class="badge">${esc(v.cefr)}</span>` : ''}</div>
+        <div class="row" style="justify-content:center;margin-top:8px">
+          <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button><button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button></div>
+        <div class="back"><div class="vn">${esc(v.vn)}</div>
+          <p>${esc(v.ex)} <button class="say" data-say="${esc(v.ex)}" data-lang="${accent()}">🔊</button></p>
+          <div class="memo"><b>💡 Cách nhớ</b><div>${esc(v.m || autoTip(v))}</div></div></div>
+      </div>
+      <div class="row">${i ? '<button class="btn ghost" data-prev>← Từ trước</button>' : ''}<button class="btn" data-next style="flex:1">${i + 1 < words.length ? 'Từ tiếp theo →' : 'Xong, sang luyện tập →'}</button></div>
+      <p class="muted small" style="text-align:center">Đọc to từ và câu ví dụ, nhìn kỹ cách nhớ. Bước này chưa kiểm tra.</p>`;
+    bindSay(view);
+    say(v.w, { lang: accent() });
+    view.querySelector('[data-next]').onclick = () => { i++; if (i < words.length) study(); else interlude('Bước 2/3 · Chọn nghĩa', 'Nhìn từ tiếng Anh và chọn nghĩa đúng. Sai thì app chỉ cách nhớ.', quizMeaning); };
+    view.querySelector('[data-prev]')?.addEventListener('click', () => { i--; study(); });
+  }
+
+  // Bước 2: nhìn từ, chọn nghĩa đúng
+  function quizMeaning() {
+    const items = shuffle(words).map(v => {
+      const pool = vocab.filter(x => x.w !== v.w && x.vn !== v.vn);
+      const same = shuffle(pool.filter(x => x.t === v.t)).slice(0, 3);
+      const others = same.length === 3 ? same : [...same, ...shuffle(pool).slice(0, 3 - same.length)];
+      const options = shuffle([v.vn, ...others.map(x => x.vn)]);
+      return { w: v.w, q: v.w, type: 'mcq', options, answer: options.indexOf(v.vn), say: v.w, explain: v.m || v.ex, tag: 'V-recall' };
+    });
+    runQuiz(view, items, {
+      title: 'Bước 2/3 · Chọn nghĩa', lang: accent(),
+      onAnswer: r => { if (r.correct) score[r.item.w]++; store.logAttempt({ item: r.item.w, skill: 'V', type: 'V-meaning', correct: r.correct, ms: r.ms }); },
+      onDone: () => interlude('Bước 3/3 · Viết lại từ', 'Nhìn nghĩa tiếng Việt và viết lại từ tiếng Anh. Có gợi ý chữ cái đầu và số ký tự.', quizWrite),
+    });
+  }
+
+  // Bước 3: nhìn nghĩa, viết lại từ tiếng Anh
+  function quizWrite() {
+    const items = shuffle(words).map(v => ({
+      w: v.w, q: v.vn, lead: `${v.p} · gợi ý: bắt đầu bằng "${v.w[0]}", ${v.w.length} ký tự`,
+      type: 'text', answer: [v.w], ph: 'Gõ từ tiếng Anh', explain: v.ex, tag: 'L-spelling',
+    }));
+    runQuiz(view, items, {
+      title: 'Bước 3/3 · Viết từ', lang: accent(),
+      onAnswer: r => { if (r.correct) score[r.item.w]++; store.logAttempt({ item: r.item.w, skill: 'V', type: 'V-spelling', correct: r.correct, ms: r.ms, detail: r.correct ? '' : String(r.given) }); },
+      onDone: finish,
+    });
+  }
+
+  function interlude(title, text, next) {
+    view.innerHTML = `<div class="card result-big"><h3>${title}</h3><p class="meta">${text}</p><button class="btn" data-go>Bắt đầu</button></div>`;
+    view.querySelector('[data-go]').onclick = next;
+  }
+
+  function finish() {
+    store.update(s => {
+      if (s.newToday.date !== today()) s.newToday = { date: today(), n: 0 };
+      words.forEach(v => { s.srs[v.w] = review(s.srs[v.w], score[v.w] >= 2 ? 2 : score[v.w] === 1 ? 1 : 0); s.newToday.n++; });
+    });
+    const total = words.length * 2, ok = Object.values(score).reduce((a, b) => a + b, 0);
+    const pct = Math.round((ok / total) * 100);
+    const weak = words.filter(v => score[v.w] < 2);
+    const r = resultCard(pct, `<p class="meta">Em vừa học ${words.length} từ mới. Từ nào còn sai sẽ quay lại sớm trong phần Ôn thẻ.</p>
+      <div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/vocab/review">Ôn thẻ đến hạn</a><a class="btn ghost" href="#/">Về Hôm nay</a></div>`);
+    view.innerHTML = `<h1>${bi('Xong buổi học từ mới', 'Well done')}</h1>${r.html}
+      ${weak.length ? `<h2>${bi('Từ cần nhớ thêm', 'Words to revisit')}</h2><div class="card">${weak.map(v => `<div class="review-item"><b>${esc(v.w)}</b> <span class="muted small">${esc(v.p)}</span> · ${esc(v.vn)} <button class="say" data-say="${esc(v.w)}" data-lang="${accent()}">🔊</button>
+        <div class="memo"><b>💡 Cách nhớ</b><div>${esc(v.m || autoTip(v))}</div></div></div>`).join('')}</div>` : ''}`;
+    bindSay(view);
+    confetti(r.party ? 110 : 50);
+  }
+
+  study();
+}
+
 function dictation(view, vocab) {
   const s = store.get();
-  const known = vocab.filter(v => s.srs[v.w]?.ivl >= 1);
-  const pool = known.length >= 5 ? known : vocab.slice(0, 20);
+  // Chỉ lấy từ đã ôn ít nhất 2 lần, để em đã nhớ nghĩa trước khi phải nghe và viết
+  const known = vocab.filter(v => s.srs[v.w]?.reps >= 2);
+  if (known.length < 5) {
+    view.innerHTML = `<h1>${bi('Nghe – gõ', 'Dictation')}</h1><div class="card"><h3>Chưa đủ từ để nghe–gõ</h3>
+      <p class="meta">Phần này chỉ dùng những từ em đã ôn ít nhất hai lần (hiện có ${known.length} từ, cần 5). Học từ mới và ôn thẻ vài ngày là mở được.</p>
+      <a class="btn" href="#/vocab/learn">Học từ mới</a><a class="btn ghost" href="#/vocab/review">Ôn thẻ</a></div>`;
+    return;
+  }
+  const pool = known;
   const items = shuffle(pool).slice(0, 10).map(v => ({
     q: 'Nghe và gõ lại từ',
-    lead: known.length >= 5 ? '' : 'Chưa đủ từ đã thuộc, tạm lấy các từ đầu danh sách.',
     type: 'text', answer: [v.w], say: v.w, ph: 'Gõ từ bạn nghe được',
     explain: `${v.w} (${v.p}): ${v.vn}`,
   }));
