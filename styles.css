@@ -339,3 +339,8 @@ header.top .audio-wrap { margin-left: auto; margin-right: 8px; }
 .audio-pop label b { float: right; }
 .audio-pop input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 6px; }
 .audio-pop .row { margin: 4px 0 8px; }
+
+/* Phiên âm trên thẻ từ */
+.ipa { font-family: "Segoe UI", "Lucida Sans Unicode", "Arial Unicode MS", system-ui, sans-serif; color: var(--muted); font-size: 1.05rem; margin-top: 2px; text-align: center; }
+.ipa small, .ipa-s small { font-size: 0.75em; }
+.ipa-s { font-family: "Segoe UI", "Lucida Sans Unicode", system-ui, sans-serif; color: var(--muted); font-size: 0.85rem; }

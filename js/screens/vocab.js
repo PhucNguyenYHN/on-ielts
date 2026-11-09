@@ -8,6 +8,10 @@ import { runQuiz } from '../quiz.js';
 import { resultCard, spellingDiff } from '../coach.js';
 import { confetti } from '../fx.js';
 
+// Phiên âm giọng Anh: "ɪnˈkriːs (v) · ˈɪŋkriːs (n)" → /ɪnˈkriːs/ (v) · /ˈɪŋkriːs/ (n)
+const ipa = v => !v.i ? '' : v.i.split(' · ').map(x => { const m = x.match(/^(.*?)(?:\s+\((.+)\))?$/); return `/${esc(m[1])}/${m[2] ? ` <small>(${esc(m[2])})</small>` : ''}`; }).join(' · ');
+
+
 // Cách nhớ tự động từ tiền tố, hậu tố khi từ chưa có mẹo soạn sẵn
 const AFFIX = [[/^un/, 'un- = không'], [/^dis/, 'dis- = không, ngược lại'], [/^re/, 're- = lại, lần nữa'], [/^in(?=[^aeiou])|^im/, 'in-/im- = không hoặc vào trong'], [/^pre/, 'pre- = trước'], [/^over/, 'over- = quá mức'], [/^under/, 'under- = dưới, chưa đủ'], [/^de/, 'de- = xuống, bỏ đi'],
   [/tion$|sion$/, '-tion/-sion: đuôi danh từ'], [/ment$/, '-ment: đuôi danh từ'], [/ness$/, '-ness: đuôi danh từ chỉ tính chất'], [/ity$/, '-ity: đuôi danh từ'], [/ful$/, '-ful = đầy, có nhiều'], [/less$/, '-less = không có'], [/able$|ible$/, '-able/-ible = có thể'], [/ly$/, '-ly: đuôi trạng từ'], [/ist$/, '-ist: người làm nghề'], [/ee$/, '-ee: người được nhận'], [/(er|or)$/, '-er/-or: người hoặc vật làm việc gì']];
@@ -71,7 +75,7 @@ function cards(view, vocab) {
     view.innerHTML = `
       <div class="qhead muted small">Còn ${q.length} thẻ ${isNew ? '<span class="badge">Từ mới</span>' : ''}</div>
       <div class="card flash">
-        <div class="word">${esc(v.w)}</div>
+        <div class="word">${esc(v.w)}</div>${v.i ? `<div class="ipa">${ipa(v)}</div>` : ''}
         <div class="pos">${esc(v.p)} · ${esc(v.t)}${v.cefr ? ` · <span class="badge">${esc(v.cefr)}</span>` : ""}</div>
         <div class="row" style="justify-content:center;margin-top:8px">
           <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button>
@@ -157,7 +161,7 @@ function learn(view, vocab) {
     view.innerHTML = `<div class="row" style="justify-content:space-between"><div class="qhead muted small">Bước 1/3 · Xem từ mới · ${i + 1}/${words.length}</div><span class="badge">Từ mới</span></div>
       <div class="bar"><i style="width:${(i / words.length) * 100}%"></i></div>
       <div class="card flash">
-        <div class="word">${esc(v.w)}</div>
+        <div class="word">${esc(v.w)}</div>${v.i ? `<div class="ipa">${ipa(v)}</div>` : ''}
         <div class="pos">${esc(v.p)} · ${esc(v.t)}${v.cefr ? ` · <span class="badge">${esc(v.cefr)}</span>` : ''}</div>
         <div class="row" style="justify-content:center;margin-top:8px">
           <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button><button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button></div>
@@ -270,7 +274,7 @@ function list(view, vocab) {
   const topics = [...new Set(vocab.map(v => v.t))];
   const known = v => s.srs[v.w]?.ivl >= 1;
   const row = v => `<div class="ex"><div class="row" style="justify-content:space-between">
-      <span><b>${esc(v.w)}</b> <span class="muted small">${esc(v.p)}${v.cefr ? ` · ${esc(v.cefr)}` : ""}</span> ${known(v) ? '<span class="badge done">đã thuộc</span>' : ''}</span>
+      <span><b>${esc(v.w)}</b> ${v.i ? `<span class="ipa-s">${ipa(v)}</span>` : ''} <span class="muted small">${esc(v.p)}${v.cefr ? ` · ${esc(v.cefr)}` : ""}</span> ${known(v) ? '<span class="badge done">đã thuộc</span>' : ''}</span>
       <span><button class="say" data-say="${esc(v.w)}" data-lang="en-GB">UK</button> <button class="say" data-say="${esc(v.w)}" data-lang="en-US">US</button></span></div>
       <div>${esc(v.vn)}</div><div class="muted small">${esc(v.ex)}</div></div>`;
   view.innerHTML = `<h1>${bi('Danh sách từ', 'Word list')}</h1>
