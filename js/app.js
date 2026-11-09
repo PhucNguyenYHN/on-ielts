@@ -15,6 +15,7 @@ import { CONFIG } from './config.js';
 import { unlock } from './lock.js';
 
 // Tên hồ sơ trên thanh đầu, để biết đang học bằng tài khoản nào
+import('./audio.js').then(m => m.mountAudio(document.querySelector('header.top')));
 document.querySelector('.brand').insertAdjacentHTML('beforeend', ` <span class="badge">${CONFIG.learner}</span>`);
 
 const routes = { home, vocab, grammar, placement, mic, settings, speak, writing, listen };

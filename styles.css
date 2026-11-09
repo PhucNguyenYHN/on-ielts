@@ -329,3 +329,13 @@ audio { width: 100%; margin: 6px 0; }
 .progress span { display: block; height: 100%; background: var(--accent, #6b5cff); border-radius: 99px; transition: width .3s; }
 .lead { font-size: 1.12rem; line-height: 1.6; }
 .fix-tip button.say { margin: 2px 2px 0 0; }
+
+/* Nút âm lượng trên thanh đầu trang */
+header.top .audio-wrap { margin-left: auto; margin-right: 8px; }
+.audio-btn { background: var(--card); border: 1px solid var(--line); border-radius: 999px; width: 34px; height: 30px; font-size: 1rem; cursor: pointer; color: var(--ink); }
+.audio-pop { position: absolute; right: 16px; top: calc(100% + 4px); z-index: 50; width: min(300px, calc(100vw - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; box-shadow: var(--shadow); }
+.audio-pop[hidden] { display: none; }
+.audio-pop label { display: block; font-size: 0.85rem; margin-bottom: 10px; }
+.audio-pop label b { float: right; }
+.audio-pop input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 6px; }
+.audio-pop .row { margin: 4px 0 8px; }
