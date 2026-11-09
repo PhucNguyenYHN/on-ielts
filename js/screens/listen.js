@@ -25,9 +25,16 @@ function talk(view, t) {
   const play = async rate => {
     stopTTS(); playing = true; cancelled = false;
     const st = view.querySelector('[data-st]');
+    // Đoạn hội thoại tách bằng " — ": mỗi người nói đổi giọng (giọng khác hoặc cao độ khác)
+    let who = 0;
     for (let k = 0; k < t.text.length && !cancelled; k++) {
       if (st) st.textContent = `Đoạn ${k + 1}/${t.text.length}`;
-      await say(t.text[k], { lang: t.lang, rate });
+      const turns = t.text[k].split(/\s+—\s+/);
+      for (let j = 0; j < turns.length && !cancelled; j++) {
+        if (j > 0) who = 1 - who;
+        await say(turns[j], { lang: t.lang, rate, voice: who, pitch: who ? 0.85 : 1 });
+      }
+      if (turns.length > 1) who = 0;
     }
     playing = false;
     if (st && !cancelled) st.textContent = 'Nghe xong. Bấm Trả lời câu hỏi khi sẵn sàng.';
