@@ -104,7 +104,7 @@ export function tokens(s) {
       const n = +m[1];
       out.push(...(ORD[n] || (n > 20 && n < 100 && ORD[n % 10] ? TENS[Math.floor(n / 10)] + ' ' + ORD[n % 10] : w)).split(' '));
     } else if (/^\d+$/.test(w)) out.push(...numWords(+w).split(' '));
-    else out.push(w.replace(/^'+|'+$/g, ''));
+    else out.push(w.replace(/'/g, '')); // today's = todays: gõ thiếu dấu nháy vẫn tính đúng
   });
   return out.filter(Boolean);
 }

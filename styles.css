@@ -323,3 +323,9 @@ audio { width: 100%; margin: 6px 0; }
   body { padding-bottom: 0; }
   .tabs { position: sticky; top: 64px; bottom: auto; margin: 10px auto 0; }
 }
+
+/* Luyện từng câu: thanh tiến độ và câu mẫu */
+.progress { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0 4px; }
+.progress span { display: block; height: 100%; background: var(--accent, #6b5cff); border-radius: 99px; transition: width .3s; }
+.lead { font-size: 1.12rem; line-height: 1.6; }
+.fix-tip button.say { margin: 2px 2px 0 0; }
