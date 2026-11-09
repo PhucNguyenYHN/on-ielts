@@ -1,22 +1,23 @@
 // Huấn luyện viên: lời khen, lời động viên, và hướng dẫn sửa khi làm sai.
-import { esc, loadContent } from './util.js';
+import { esc, loadContent, xung } from './util.js';
 import { ring } from './fx.js';
 
 const pick = a => a[(Math.random() * a.length) | 0];
 
-export const praise = streak => streak >= 5
+export const praise = streak => xung(praise0(streak));
+const praise0 = streak => streak >= 5
   ? pick([`${streak} câu đúng liên tiếp! Em đang vào phong độ 🔥`, `Chuỗi ${streak} câu đúng, giữ nhịp này nhé 🔥`, `${streak} câu liền không sai, tuyệt vời 🔥`])
   : streak >= 3
     ? pick([`${streak} câu đúng liên tiếp 👏`, `Đúng ${streak} câu liền rồi đấy 👏`])
     : pick(['Chính xác!', 'Đúng rồi!', 'Giỏi lắm!', 'Chuẩn!', 'Làm tốt lắm!', 'Đúng, em nắm được rồi!']);
 
-export const comfort = () => pick([
+export const comfort = () => xung(pick([
   'Chưa đúng, nhưng sai ở đây là để nhớ lâu hơn.',
   'Không sao, câu này nhiều người nhầm.',
   'Gần đúng rồi, xem lại chỗ sai bên dưới nhé.',
   'Sai một lần, nhớ cả đời. Đọc kỹ phần sửa nhé.',
   'Đừng nản, mỗi lỗi sửa được là thêm một bước tới 5.5.',
-]);
+]));
 
 // Lời kết buổi theo tỉ lệ đúng
 export function endMessage(pct) {
@@ -31,7 +32,7 @@ export function endMessage(pct) {
 export function resultCard(pct, extra = '') {
   const m = endMessage(pct);
   return { html: `<div class="card result-big">${ring(pct / 100, { size: 110, stroke: 10, label: pct + '%' })}
-    <h3>${m.title}</h3><p class="meta">${m.text}</p>${extra}</div>`, party: m.party };
+    <h3>${m.title}</h3><p class="meta">${xung(m.text)}</p>${extra}</div>`, party: m.party };
 }
 
 let tipsP = null;

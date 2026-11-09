@@ -1,9 +1,9 @@
 // Trạng thái học: lưu trên máy (localStorage) và đồng bộ lên Apps Script để dùng chung giữa iPhone và máy tính.
-import { CONFIG } from './config.js';
+import { CONFIG, storeKey } from './config.js';
 import { today } from './util.js';
 
-const KEY = 'ielts.state.v1';
-const QKEY = 'ielts.queue.v1';
+const KEY = storeKey('ielts.state.v1');
+const QKEY = storeKey('ielts.queue.v1');
 
 const blank = () => ({
   v: 1, updatedAt: 0,
@@ -67,7 +67,7 @@ export const apiOn = () => !!CONFIG.apiUrl;
 // Gửi dạng text/plain để trình duyệt không phải hỏi CORS trước (Apps Script không trả lời OPTIONS)
 export async function api(payload) {
   if (!apiOn()) throw new Error('Chưa cấu hình máy chủ');
-  const r = await fetch(CONFIG.apiUrl, { method: 'POST', body: JSON.stringify({ ...payload, token: CONFIG.token }) });
+  const r = await fetch(CONFIG.apiUrl, { method: 'POST', body: JSON.stringify({ ...payload, token: CONFIG.token, user: CONFIG.user }) });
   const j = await r.json();
   if (!j.ok) throw new Error(j.error || 'Lỗi máy chủ');
   return j;
@@ -102,7 +102,7 @@ export async function pushState() {
 export async function pullState(force = false) {
   if (!apiOn()) return false;
   try {
-    const r = await fetch(`${CONFIG.apiUrl}?action=state&token=${encodeURIComponent(CONFIG.token)}`);
+    const r = await fetch(`${CONFIG.apiUrl}?action=state&token=${encodeURIComponent(CONFIG.token)}&user=${CONFIG.user}`);
     const j = await r.json();
     if (!j.ok) throw new Error(j.error);
     setStatus('ok');
@@ -117,11 +117,11 @@ export async function pullState(force = false) {
 }
 
 // ---- Bài viết đã nộp và điểm chấm (đọc từ tab BaiViet, lưu đệm trên máy) ----
-const WKEY = 'ielts.writings.v1';
+const WKEY = storeKey('ielts.writings.v1');
 export const cachedWritings = () => read(WKEY, []);
 export async function fetchWritings() {
   if (!apiOn()) return cachedWritings();
-  const r = await fetch(`${CONFIG.apiUrl}?action=writings&token=${encodeURIComponent(CONFIG.token)}`);
+  const r = await fetch(`${CONFIG.apiUrl}?action=writings&token=${encodeURIComponent(CONFIG.token)}&user=${CONFIG.user}`);
   const j = await r.json();
   if (!j.ok || !Array.isArray(j.writings)) throw new Error(j.error || 'Máy chủ chưa có lệnh đọc bài viết');
   try { localStorage.setItem(WKEY, JSON.stringify(j.writings)); } catch { /* bỏ qua */ }

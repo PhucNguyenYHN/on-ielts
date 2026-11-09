@@ -1,6 +1,6 @@
 import * as store from '../store.js';
 import { CONFIG } from '../config.js';
-import { esc, streak, weekCount, today, loadContent } from '../util.js';
+import { esc, streak, weekCount, today, loadContent, xung } from '../util.js';
 import { dueIds, learnedCount } from '../srs.js';
 import { recommendLesson, newWordsLeft, PLACEMENT_SECTIONS } from '../engine.js';
 import { icon } from '../icons.js';
@@ -40,8 +40,8 @@ const task = (skill, href, ic, title, meta, badge = '') => `<a class="card task"
 export default async function home(view) {
   const [vocab, grammar] = await Promise.all([loadContent('vocab'), loadContent('grammar')]);
   const s = store.get();
-  const exam = new Date(CONFIG.examDate + 'T00:00:00');
-  const daysLeft = Math.max(0, Math.ceil((exam - new Date()) / 864e5));
+  const exam = CONFIG.examDate ? new Date(CONFIG.examDate + 'T00:00:00') : null;
+  const daysLeft = exam ? Math.max(0, Math.ceil((exam - new Date()) / 864e5)) : null;
   const due = dueIds(s.srs).length;
   const fresh = Math.min(newWordsLeft(s, CONFIG.newWordsPerDay), vocab.filter(v => !s.srs[v.w]).length);
   const pDone = PLACEMENT_SECTIONS.filter(k => s.placement[k]).length;
@@ -50,7 +50,7 @@ export default async function home(view) {
   const st = streak(s.days);
   const learned = learnedCount(s.srs);
   const [hello, emoji] = greet();
-  const quote = QUOTES[Math.floor(Date.now() / 864e5) % QUOTES.length];
+  const quote = xung(QUOTES[Math.floor(Date.now() / 864e5) % QUOTES.length]);
 
   const cards = [];
   const graded = store.unseenGraded();
@@ -75,9 +75,9 @@ export default async function home(view) {
     <div class="card hero">
       <div class="hero-top">
         <div><h2>${hello}, ${esc(CONFIG.learner)} ${emoji}</h2><div class="meta" style="margin-top:4px">${quote}</div></div>
-        <div class="count"><b>${daysLeft}</b><span>ngày đến kỳ thi</span></div>
+        ${exam ? `<div class="count"><b>${daysLeft}</b><span>ngày đến kỳ thi</span></div>` : `<div class="count"><b>${learned}</b><span>từ đã thuộc</span></div>`}
       </div>
-      <div class="road"><span class="dot now">4.5</span><span class="line"></span><span class="dot">5.0</span><span class="line"></span><span class="dot">5.5 🎯</span><span class="line"></span><span class="dot">6.5</span></div>
+      ${CONFIG.target ? '<div class="road"><span class="dot now">4.5</span><span class="line"></span><span class="dot">5.0</span><span class="line"></span><span class="dot">5.5 🎯</span><span class="line"></span><span class="dot">6.5</span></div>' : ''}
     </div>
     <div class="card today">
       ${ring(mins / DAILY_MINUTES, { size: 72, stroke: 8, label: `${mins}′` })}

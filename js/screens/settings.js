@@ -1,10 +1,15 @@
 import * as store from '../store.js';
-import { CONFIG } from '../config.js';
+import { CONFIG, USERS, switchUser } from '../config.js';
 import { esc, bi } from '../util.js';
 
 export default function settings(view) {
   const s = store.get();
   view.innerHTML = `<h1>${bi('Cài đặt', 'Settings')}</h1>
+    <div class="card">
+      <h3>Người học</h3>
+      <p class="meta">Đang học với hồ sơ <b>${esc(CONFIG.learner)}</b>. Mỗi hồ sơ có tiến độ, từ vựng và bài viết riêng.</p>
+      <div class="row">${Object.entries(USERS).map(([id, u]) => `<button class="btn ${id === CONFIG.user ? '' : 'ghost'}" data-user="${id}" ${id === CONFIG.user ? 'disabled' : ''}>${esc(u.learner)}</button>`).join('')}</div>
+    </div>
     <div class="card">
       <label for="accent"><b>Giọng phát âm mẫu</b></label>
       <select id="accent">
@@ -25,13 +30,14 @@ export default function settings(view) {
     </div>
     <div class="card">
       <h3>Khác</h3>
-      <p class="meta">Người học: ${esc(CONFIG.learner)} · Kỳ thi dự kiến: ${esc(new Date(CONFIG.examDate + 'T00:00:00').toLocaleDateString('vi-VN'))}</p>
+      <p class="meta">Người học: ${esc(CONFIG.learner)}${CONFIG.examDate ? ` · Kỳ thi dự kiến: ${esc(new Date(CONFIG.examDate + 'T00:00:00').toLocaleDateString('vi-VN'))}` : ''}</p>
       <div class="row">
         <a class="btn ghost" href="#/mic">Thử micro</a>
         <button class="btn ghost" data-export>Tải bản sao lưu</button>
         <button class="btn danger" data-reset>Xóa dữ liệu trên máy này</button>
       </div>
     </div>`;
+  view.querySelectorAll('[data-user]').forEach(b => { b.onclick = () => { if (confirm(`Chuyển sang hồ sơ ${USERS[b.dataset.user].learner}?`)) switchUser(b.dataset.user); }; });
   const msg = view.querySelector('[data-msg]');
   const sel = view.querySelector('#accent');
   sel.value = s.prefs.accent;

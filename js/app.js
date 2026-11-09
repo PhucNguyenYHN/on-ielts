@@ -10,6 +10,10 @@ import speak from './screens/speak.js';
 import writing from './screens/writing.js';
 
 import { icon } from './icons.js';
+import { CONFIG } from './config.js';
+
+// Tên hồ sơ trên thanh đầu, để biết đang học bằng tài khoản nào
+document.querySelector('.brand').insertAdjacentHTML('beforeend', ` <span class="badge">${CONFIG.learner}</span>`);
 
 const routes = { home, vocab, grammar, placement, mic, settings, speak, writing };
 

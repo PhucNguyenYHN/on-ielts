@@ -1,5 +1,6 @@
 // Kiểm tra đầu vào: 6 phần, làm theo thứ tự tùy ý, có thể chia nhiều buổi.
 import * as store from '../store.js';
+import { storeKey } from '../config.js';
 import { esc, bi, shuffle, checkText, countdown, wordCount, loadContent } from '../util.js';
 import { toBand, PLACEMENT_SECTIONS } from '../engine.js';
 import { runQuiz } from '../quiz.js';
@@ -220,7 +221,7 @@ function reading(view, data) {
 }
 
 // ---- Viết ----
-const DRAFT = 'ielts.draft.placement-writing';
+const DRAFT = storeKey('ielts.draft.placement-writing');
 function writing(view, data) {
   const W = data.writing;
   let stopTimer = null;
