@@ -1,8 +1,13 @@
 // Cấu hình app. Sau khi triển khai Apps Script, dán URL web app (đuôi /exec) vào apiUrl.
 // Mỗi người học có hồ sơ riêng; dữ liệu lưu riêng trên máy và trên máy chủ.
 export const USERS = {
-  thao: { learner: 'Thảo', xung: 'em', examDate: '2027-07-15', target: '5.5' },
-  phuc: { learner: 'Phúc', xung: 'anh', examDate: '', target: '' },
+  thao: { learner: 'Thảo', xung: 'em', examDate: '2027-07-15', target: '5.5', ielts: true,
+    tabs: ['home', 'vocab', 'grammar', 'speak', 'settings'] },
+  // Phúc: mục tiêu B1 giao tiếp, nghe được hội thảo, không luyện thi IELTS
+  phuc: { learner: 'Phúc', xung: 'anh', examDate: '', target: '', ielts: false, goal: 'B1 giao tiếp',
+    tabs: ['home', 'vocab', 'listen', 'speak', 'settings'],
+    focusTopics: ['Hội thảo y khoa', 'Sức khỏe', 'Khoa học và Dược'],
+    laterTopics: ['Xu hướng (Task 1)', 'Từ dùng cho Writing', 'Từ học thuật'] },
 };
 
 // Chọn người học: link có ?u=phuc thì nhớ luôn trên máy này; không có thì dùng lần chọn trước, mặc định Thảo

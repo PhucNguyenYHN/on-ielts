@@ -57,7 +57,7 @@ export default async function home(view) {
   if (graded.length) {
     cards.push(task('write', `#/writing/${graded[0].ts}`, 'pen', 'Bài viết đã có điểm', `${graded[0].score ? `Band ${esc(graded[0].score)}. ` : ''}Mở xem nhận xét và cách sửa lỗi.`, '<span class="badge warn">Mới</span>'));
   }
-  if (pDone < PLACEMENT_SECTIONS.length) {
+  if (CONFIG.ielts && pDone < PLACEMENT_SECTIONS.length) {
     cards.push(task('test', '#/placement', 'test', 'Kiểm tra đầu vào', `Đã xong ${pDone}/${PLACEMENT_SECTIONS.length} phần. Có thể chia làm nhiều buổi.`, '<span class="badge warn">Làm trước</span>'));
   }
   if (!s.device?.ok) {
@@ -69,7 +69,8 @@ export default async function home(view) {
   const canDictate = Object.values(s.srs).filter(c => c.reps >= 2).length >= 5;
   if (rec) cards.push(task('grammar', `#/grammar/${esc(rec.lesson.id)}`, 'grammar', `Ngữ pháp: ${esc(rec.lesson.title)}`, `${esc(rec.why)} · khoảng 10 phút`));
   if (canDictate) cards.push(task('listen', '#/vocab/dictation', 'headphones', 'Nghe và gõ chính tả', 'Nghe từ đã ôn rồi viết lại, luyện chính tả cho Listening.', '<span class="badge">10 từ</span>'));
-  cards.push(task('speak', '#/speak', 'mic', 'Luyện nói', 'Đọc to 5 câu, máy nghe ra đúng chữ là phát âm đạt.', '<span class="badge">5 phút</span>'));
+  if (!CONFIG.ielts) cards.push(task('listen', '#/listen', 'headphones', 'Nghe hội thảo', 'Bài nói ngắn về tim mạch, nghe rồi trả lời câu hỏi, xem lời thoại.', '<span class="badge">10 phút</span>'));
+  cards.push(task('speak', CONFIG.ielts ? '#/speak' : '#/speak/part1/0', 'mic', CONFIG.ielts ? 'Luyện nói' : 'Luyện trò chuyện', CONFIG.ielts ? 'Đọc to 5 câu, máy nghe ra đúng chữ là phát âm đạt.' : 'Tự giới thiệu, nói về công việc, đặt câu hỏi ở hội thảo.', '<span class="badge">5 phút</span>'));
 
   view.innerHTML = `
     <div class="card hero">
@@ -77,6 +78,7 @@ export default async function home(view) {
         <div><h2>${hello}, ${esc(CONFIG.learner)} ${emoji}</h2><div class="meta" style="margin-top:4px">${quote}</div></div>
         ${exam ? `<div class="count"><b>${daysLeft}</b><span>ngày đến kỳ thi</span></div>` : `<div class="count"><b>${learned}</b><span>từ đã thuộc</span></div>`}
       </div>
+      ${!CONFIG.ielts ? '<div class="road"><span class="dot now">A2</span><span class="line"></span><span class="dot">B1 🎯</span><span class="line"></span><span class="dot">Nghe hội thảo</span></div>' : ''}
       ${CONFIG.target ? '<div class="road"><span class="dot now">4.5</span><span class="line"></span><span class="dot">5.0</span><span class="line"></span><span class="dot">5.5 🎯</span><span class="line"></span><span class="dot">6.5</span></div>' : ''}
     </div>
     <div class="card today">
@@ -91,6 +93,6 @@ export default async function home(view) {
     </div>
     <h2>Việc hôm nay <span class="en">Today's plan</span></h2>
     ${cards.join('')}
-    <a class="card task" href="#/writing" data-skill="write"><span class="chip">${icon('book', 24)}</span><span class="body"><h3>Bài viết của em</h3><div class="meta">Xem điểm và nhận xét các bài Writing đã nộp.</div></span><span class="go">${icon('arrow', 20)}</span></a>
+    ${CONFIG.ielts ? '' : '<!-- -->'}<a class="card task" href="#/writing" data-skill="write" ${CONFIG.ielts ? '' : 'hidden'}><span class="chip">${icon('book', 24)}</span><span class="body"><h3>Bài viết của em</h3><div class="meta">Xem điểm và nhận xét các bài Writing đã nộp.</div></span><span class="go">${icon('arrow', 20)}</span></a>
     <p class="muted small" style="text-align:center;margin-top:16px">Buổi ngắn 10–15 phút: ôn từ và nghe–gõ. Buổi dài 45–60 phút: thêm ngữ pháp hoặc luyện nói.</p>`;
 }

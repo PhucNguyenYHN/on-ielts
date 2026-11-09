@@ -127,12 +127,22 @@ function cards(view, vocab) {
   show();
 }
 
+// Thứ tự học theo hồ sơ: chủ đề ưu tiên trước, chủ đề luyện thi IELTS để sau cùng
+function plan(vocab) {
+  const focus = CONFIG.focusTopics || [], later = new Set(CONFIG.laterTopics || []);
+  if (!focus.length && !later.size) return vocab;
+  const first = focus.flatMap(t => vocab.filter(v => v.t === t)); // theo thứ tự chủ đề ưu tiên
+  const mid = vocab.filter(v => !focus.includes(v.t) && !later.has(v.t) && v.lv <= 2);
+  const used = new Set([...first, ...mid]);
+  return [...first, ...mid, ...vocab.filter(v => !used.has(v))];
+}
+
 // Học từ mới theo 3 bước: xem (từ + nghĩa + cách nhớ) → chọn nghĩa → viết lại từ từ nghĩa.
 // Xong mới đưa vào lịch ôn: đúng cả hai bước = Nhớ, đúng một = Khó, sai cả hai = Quên (gặp lại sớm).
 function learn(view, vocab) {
   const s0 = store.get();
   const accent = () => store.get().prefs.accent;
-  const words = vocab.filter(v => !s0.srs[v.w]).slice(0, newWordsLeft(s0, CONFIG.newWordsPerDay));
+  const words = plan(vocab).filter(v => !s0.srs[v.w]).slice(0, newWordsLeft(s0, CONFIG.newWordsPerDay));
   if (!words.length) {
     view.innerHTML = `<h1>${bi('Học từ mới', 'New words')}</h1><div class="card result-big"><h3>Hôm nay đã học đủ ${CONFIG.newWordsPerDay} từ mới 🎉</h3>
       <p class="meta">Mai quay lại học tiếp nhé. Giờ có thể ôn thẻ đến hạn.</p><a class="btn" href="#/vocab/review">Ôn thẻ</a></div>`;

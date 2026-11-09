@@ -1,0 +1,98 @@
+[
+  {
+    "id": "T1", "title": "Mở đầu một phiên hội thảo", "en": "Opening a session", "level": "B1", "lang": "en-GB",
+    "intro": "Chủ tọa giới thiệu phiên hội thảo về suy tim: thời gian, diễn giả, cách đặt câu hỏi.",
+    "text": [
+      "Good morning, everyone, and welcome to the second session of today's conference. My name is Doctor Sarah Lee, and I will be chairing this session on heart failure.",
+      "We have three speakers this morning. Each speaker will talk for about fifteen minutes. After all three talks, we will have a twenty-minute question and answer session.",
+      "If you have a question, please raise your hand and wait for the microphone. Please say your name and your hospital before you ask your question, and try to keep it short.",
+      "Our first speaker is Professor James Wong from Singapore. He will talk about new medicines for heart failure. Professor Wong, the floor is yours."
+    ],
+    "phrases": [
+      ["I will be chairing this session", "tôi sẽ chủ tọa phiên này"],
+      ["question and answer session", "phần hỏi đáp"],
+      ["raise your hand", "giơ tay"],
+      ["wait for the microphone", "chờ micro"],
+      ["the floor is yours", "xin mời anh/chị bắt đầu"]
+    ],
+    "questions": [
+      { "q": "What is the topic of this session?", "o": ["High blood pressure", "Heart failure", "Heart surgery", "Stroke"], "a": 1, "explain": "\"…chairing this session on heart failure.\"" },
+      { "q": "How long will each speaker talk?", "o": ["About 10 minutes", "About 15 minutes", "About 20 minutes", "About 30 minutes"], "a": 1, "explain": "\"Each speaker will talk for about fifteen minutes.\" 20 phút là thời gian hỏi đáp, dễ nhầm." },
+      { "q": "When is the Q&A?", "o": ["After each talk", "Before the talks", "After all three talks", "At lunchtime"], "a": 2, "explain": "\"After all three talks, we will have a twenty-minute question and answer session.\"" },
+      { "q": "What should you say before your question?", "o": ["Your age and country", "Your name and hospital", "Your email", "Nothing"], "a": 1, "explain": "\"Please say your name and your hospital before you ask your question.\"" },
+      { "q": "Where is the first speaker from?", "o": ["Japan", "Vietnam", "Singapore", "The UK"], "a": 2, "explain": "\"Professor James Wong from Singapore.\"" }
+    ]
+  },
+  {
+    "id": "T2", "title": "Tăng huyết áp ở người trẻ", "en": "Hypertension in young adults", "level": "B1", "lang": "en-US",
+    "intro": "Một bài nói ngắn về tăng huyết áp ở người dưới 40 tuổi.",
+    "text": [
+      "Today I want to talk about high blood pressure in young adults, people under forty. Many doctors think hypertension is a problem of older people, but this is changing.",
+      "In our study, we checked the blood pressure of two thousand office workers in the city. About one in five had high blood pressure, and most of them did not know it.",
+      "The main risk factors were eating too much salt, not exercising, being overweight and sleeping less than six hours a night. Stress at work was also common.",
+      "So what should we do? First, we should measure blood pressure in every adult, not only older patients. Second, we need to give simple advice about salt, sleep and exercise. The take-home message is simple: check early, and treat early."
+    ],
+    "phrases": [
+      ["people under forty", "người dưới 40 tuổi"],
+      ["one in five", "một phần năm, cứ 5 người thì có 1"],
+      ["most of them did not know it", "phần lớn không biết mình bị"],
+      ["risk factors", "yếu tố nguy cơ"],
+      ["the take-home message", "thông điệp chính cần nhớ"]
+    ],
+    "questions": [
+      { "q": "Who were the people in the study?", "o": ["Hospital patients", "Office workers", "Students", "Farmers"], "a": 1, "explain": "\"…two thousand office workers in the city.\"" },
+      { "q": "How many had high blood pressure?", "o": ["About one in two", "About one in five", "About one in ten", "Nobody"], "a": 1, "explain": "\"About one in five had high blood pressure.\"" },
+      { "q": "Which is NOT a risk factor mentioned?", "o": ["Too much salt", "Little sleep", "Smoking", "Being overweight"], "a": 2, "explain": "Bài nhắc muối, ít vận động, thừa cân, ngủ ít, căng thẳng. Không nhắc hút thuốc." },
+      { "q": "What does the speaker suggest?", "o": ["Measure blood pressure in every adult", "Only check older patients", "Give medicine to everyone", "Stop working"], "a": 0, "explain": "\"…measure blood pressure in every adult, not only older patients.\"" },
+      { "q": "What is the take-home message?", "o": ["Exercise every day", "Check early and treat early", "Sleep eight hours", "Eat no salt"], "a": 1, "explain": "\"The take-home message is simple: check early, and treat early.\"" }
+    ]
+  },
+  {
+    "id": "T3", "title": "Phục hồi chức năng tim", "en": "Cardiac rehabilitation", "level": "B1", "lang": "en-GB",
+    "intro": "Bài nói về chương trình tập luyện cho bệnh nhân sau nhồi máu cơ tim.",
+    "text": [
+      "After a heart attack, many patients are afraid to move. They think exercise is dangerous for their heart. But the evidence shows the opposite.",
+      "Cardiac rehabilitation is a programme of supervised exercise, education and support. Patients usually start two to four weeks after leaving hospital, and the programme lasts about twelve weeks.",
+      "Large studies show that rehabilitation reduces the risk of another hospital admission by about one quarter. Patients also feel less anxious and return to work earlier.",
+      "The problem is that not many patients join. In some countries, fewer than thirty percent take part. The reasons are distance, cost and lack of information. As doctors, we should recommend rehabilitation to every patient before discharge."
+    ],
+    "phrases": [
+      ["the evidence shows the opposite", "bằng chứng cho thấy điều ngược lại"],
+      ["supervised exercise", "tập luyện có giám sát"],
+      ["reduces the risk by about one quarter", "giảm nguy cơ khoảng một phần tư"],
+      ["take part", "tham gia"],
+      ["before discharge", "trước khi ra viện"]
+    ],
+    "questions": [
+      { "q": "Why are many patients afraid to move?", "o": ["They are too tired", "They think exercise is dangerous", "They have no time", "The doctor says no"], "a": 1, "explain": "\"They think exercise is dangerous for their heart.\"" },
+      { "q": "When do patients usually start the programme?", "o": ["The next day", "Two to four weeks after leaving hospital", "After one year", "Before surgery"], "a": 1, "explain": "\"…start two to four weeks after leaving hospital.\"" },
+      { "q": "How long does the programme last?", "o": ["About four weeks", "About eight weeks", "About twelve weeks", "About one year"], "a": 2, "explain": "\"…the programme lasts about twelve weeks.\"" },
+      { "q": "How much does rehabilitation reduce readmission?", "o": ["By about half", "By about one quarter", "By about ten percent", "Not at all"], "a": 1, "explain": "\"…reduces the risk of another hospital admission by about one quarter.\"" },
+      { "q": "What should doctors do?", "o": ["Recommend it to every patient before discharge", "Only recommend it to young patients", "Wait for patients to ask", "Stop all exercise"], "a": 0, "explain": "\"…we should recommend rehabilitation to every patient before discharge.\"" }
+    ]
+  },
+  {
+    "id": "T4", "title": "Hỏi đáp sau bài nói", "en": "Questions after a talk", "level": "B1", "lang": "en-US",
+    "intro": "Một bác sĩ trong khán phòng đặt câu hỏi và diễn giả trả lời. Chú ý cách hỏi lịch sự.",
+    "text": [
+      "Thank you, Professor, for a very interesting talk. My name is Doctor Minh, from a heart hospital in Hanoi. I have a question about the patients in your study.",
+      "You said the average age was sixty-two. In our hospital, many heart failure patients are over eighty. Do you think the results are the same for very old patients?",
+      "That's a very good question, thank you. To be honest, we had only a small number of patients over eighty, so we can't be sure. In that group, the benefit seemed smaller, and side effects like low blood pressure were more common.",
+      "So my advice is to start with a low dose, increase it slowly, and check blood pressure and kidney function often. We are planning a new study only in older patients next year."
+    ],
+    "phrases": [
+      ["I have a question about", "tôi có câu hỏi về"],
+      ["Do you think the results are the same for…", "anh/chị có nghĩ kết quả cũng như vậy với…"],
+      ["That's a very good question", "đó là câu hỏi rất hay"],
+      ["To be honest, we can't be sure", "thật lòng mà nói, chúng tôi chưa chắc chắn"],
+      ["start with a low dose, increase it slowly", "bắt đầu liều thấp, tăng dần"]
+    ],
+    "questions": [
+      { "q": "Where does Doctor Minh work?", "o": ["Singapore", "A heart hospital in Hanoi", "A university in London", "A clinic in Vinh"], "a": 1, "explain": "\"…from a heart hospital in Hanoi.\"" },
+      { "q": "What was the average age in the study?", "o": ["Fifty-two", "Sixty-two", "Seventy-two", "Eighty"], "a": 1, "explain": "\"You said the average age was sixty-two.\"" },
+      { "q": "What did the professor say about patients over eighty?", "o": ["The benefit was bigger", "There were many of them", "There were few of them, so they can't be sure", "They were not allowed"], "a": 2, "explain": "\"…we had only a small number of patients over eighty, so we can't be sure.\"" },
+      { "q": "Which side effect was more common in older patients?", "o": ["Low blood pressure", "Headache", "Weight gain", "Cough"], "a": 0, "explain": "\"…side effects like low blood pressure were more common.\"" },
+      { "q": "What is the professor's advice?", "o": ["Avoid the drug", "Start low, increase slowly and check often", "Use the highest dose", "Only use it in young patients"], "a": 1, "explain": "\"…start with a low dose, increase it slowly, and check blood pressure and kidney function often.\"" }
+    ]
+  }
+]

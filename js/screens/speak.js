@@ -1,6 +1,10 @@
 // Luyện nói: đọc to câu mẫu (máy nghe ra đúng chữ là phát âm đạt), trả lời Speaking Part 1, ôn từ hay đọc sai.
 import * as store from '../store.js';
-import { esc, bi, shuffle, wordCount, loadContent } from '../util.js';
+import { CONFIG } from '../config.js';
+import { esc, bi, shuffle, wordCount, loadContent, xung } from '../util.js';
+
+// Bộ câu hỏi nói theo người học (Phúc: giao tiếp công việc bác sĩ, hội thảo)
+const qset = data => data['part1_' + CONFIG.user] || data.part1;
 import { say, stop as stopTTS } from '../tts.js';
 import { sttSupport, sttError, listen, compare, tokens } from '../speech.js';
 import { recorderWidget, blobToBase64 } from '../recorder.js';
@@ -41,8 +45,8 @@ function menu(view, data) {
     ${Object.entries(data.readTags).map(([t, g]) => `<a class="card" href="#/speak/read/${t}"><h3>${esc(g.name)} ${pct(t)}</h3><div class="meta">${esc(g.tip)}</div></a>`).join('')}
     ${hard.length ? `<a class="card" href="#/speak/words"><h3>Từ hay đọc sai <span class="badge warn">${hard.length} từ</span></h3><div class="meta">${esc(hard.slice(0, 8).map(x => x.w).join(', '))}</div></a>` : ''}
     <h2>${bi('Trả lời câu hỏi', 'Speaking Part 1')}</h2>
-    <a class="card" href="#/speak/part1/0"><h3>Part 1: ${data.part1.length} câu về bản thân em ${pct('S-part1')}</h3>
-      <div class="meta">Quê, chỗ ở, ngành Dược, dạy thêm, du lịch, tiền bạc. Ghi âm kèm chữ máy nghe được, gửi về bảng tính để chấm.</div></a>`;
+    <a class="card" href="#/speak/part1/0"><h3>${CONFIG.user === 'thao' ? 'Part 1' : 'Trò chuyện'}: ${qset(data).length} câu về bản thân ${xung('em')} ${pct('S-part1')}</h3>
+      <div class="meta">${CONFIG.user === 'thao' ? 'Quê, chỗ ở, ngành Dược, dạy thêm, du lịch, tiền bạc.' : 'Tự giới thiệu, công việc bác sĩ, giải thích cho bệnh nhân, đặt câu hỏi và giao lưu ở hội thảo.'} Ghi âm kèm chữ máy nghe được, có câu trả lời mẫu để so.</div></a>`;
 }
 
 // ---------- Đọc to ----------
@@ -209,7 +213,7 @@ function wordsDrill(view) {
 
 // ---------- Speaking Part 1 ----------
 function part1(view, data, i) {
-  const list = data.part1;
+  const list = qset(data);
   i = Math.max(0, Math.min(list.length - 1, i));
   const q = list[i];
   let cleanupRec = null;
