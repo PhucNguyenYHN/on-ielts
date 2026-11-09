@@ -12,6 +12,7 @@ import listen from './screens/listen.js';
 
 import { icon } from './icons.js';
 import { CONFIG } from './config.js';
+import { unlock } from './lock.js';
 
 // Tên hồ sơ trên thanh đầu, để biết đang học bằng tài khoản nào
 document.querySelector('.brand').insertAdjacentHTML('beforeend', ` <span class="badge">${CONFIG.learner}</span>`);
@@ -49,7 +50,7 @@ async function render() {
   window.scrollTo(0, 0);
 }
 
-addEventListener('hashchange', render);
+addEventListener('hashchange', () => { if (!root.querySelector('.lock')) render(); });
 
 // Đếm phút học: chỉ tính khi đang ở màn học, trang đang mở và có thao tác trong 2 phút gần nhất
 let lastAct = Date.now();
@@ -62,10 +63,13 @@ const syncEl = document.getElementById('sync');
 const LABEL = { ok: 'Đã đồng bộ', off: 'Chưa nối máy chủ', err: 'Mất kết nối, sẽ gửi lại', busy: 'Đang gửi…' };
 store.onStatus(s => { syncEl.dataset.s = s; syncEl.textContent = LABEL[s]; });
 
-render();
-store.pullState().then(changed => { if (changed) render(); store.flush(); });
-// Tải điểm Writing mới; có bài mới chấm thì vẽ lại màn Hôm nay để hiện thẻ báo
-const before = store.unseenGraded().length;
-store.fetchWritings().then(list => {
-  if (current === 'home' && store.unseenGraded(list).length !== before) render();
-}).catch(() => {});
+// Tài khoản có mã PIN: mở khóa xong mới vào app và đồng bộ
+unlock(root).then(() => {
+  render();
+  store.pullState().then(changed => { if (changed) render(); store.flush(); });
+  // Tải điểm Writing mới; có bài mới chấm thì vẽ lại màn Hôm nay để hiện thẻ báo
+  const before = store.unseenGraded().length;
+  store.fetchWritings().then(list => {
+    if (current === 'home' && store.unseenGraded(list).length !== before) render();
+  }).catch(() => {});
+});

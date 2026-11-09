@@ -1,5 +1,6 @@
 import * as store from '../store.js';
 import { CONFIG, USERS, switchUser } from '../config.js';
+import { forgetPin } from '../lock.js';
 import { esc, bi } from '../util.js';
 
 export default function settings(view) {
@@ -9,6 +10,7 @@ export default function settings(view) {
       <h3>Người học</h3>
       <p class="meta">Đang học với hồ sơ <b>${esc(CONFIG.learner)}</b>. Mỗi hồ sơ có tiến độ, từ vựng và bài viết riêng.</p>
       <div class="row">${Object.entries(USERS).map(([id, u]) => `<button class="btn ${id === CONFIG.user ? '' : 'ghost'}" data-user="${id}" ${id === CONFIG.user ? 'disabled' : ''}>${esc(u.learner)}</button>`).join('')}</div>
+      ${CONFIG.pin ? '<p class="muted small" style="margin-top:8px">🔒 Tài khoản này có mã PIN. Dùng chung máy với người khác thì bấm Khóa trước khi đưa máy.</p><button class="btn ghost" data-lock>🔒 Khóa trên máy này</button>' : ''}
     </div>
     <div class="card">
       <label for="accent"><b>Giọng phát âm mẫu</b></label>
@@ -38,6 +40,7 @@ export default function settings(view) {
       </div>
     </div>`;
   view.querySelectorAll('[data-user]').forEach(b => { b.onclick = () => { if (confirm(`Chuyển sang hồ sơ ${USERS[b.dataset.user].learner}?`)) switchUser(b.dataset.user); }; });
+  view.querySelector('[data-lock]')?.addEventListener('click', () => { forgetPin(); switchUser('thao'); });
   const msg = view.querySelector('[data-msg]');
   const sel = view.querySelector('#accent');
   sel.value = s.prefs.accent;

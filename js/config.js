@@ -4,7 +4,7 @@ export const USERS = {
   thao: { learner: 'Thảo', xung: 'em', examDate: '2027-07-15', target: '5.5', ielts: true,
     tabs: ['home', 'vocab', 'grammar', 'speak', 'settings'] },
   // Phúc: mục tiêu B1 giao tiếp, nghe được hội thảo, không luyện thi IELTS
-  phuc: { learner: 'Phúc', xung: 'anh', examDate: '', target: '', ielts: false, goal: 'B1 giao tiếp',
+  phuc: { learner: 'Phúc', xung: 'anh', examDate: '', target: '', ielts: false, goal: 'B1 giao tiếp', pin: true,
     tabs: ['home', 'vocab', 'listen', 'speak', 'settings'],
     focusTopics: ['Hội thảo y khoa', 'Sức khỏe', 'Khoa học và Dược'],
     laterTopics: ['Xu hướng (Task 1)', 'Từ dùng cho Writing', 'Từ học thuật'] },
