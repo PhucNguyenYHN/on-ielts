@@ -12,6 +12,7 @@ import listen from './screens/listen.js';
 
 import { icon } from './icons.js';
 import { CONFIG } from './config.js';
+import { xung } from './util.js';
 import { unlock } from './lock.js';
 
 // Tên hồ sơ trên thanh đầu, để biết đang học bằng tài khoản nào
@@ -51,6 +52,18 @@ async function render() {
   window.scrollTo(0, 0);
 }
 
+// Tài khoản không xưng "em" (Phúc): đổi mọi chữ "em" trên màn hình thành cách xưng của tài khoản.
+// Màn nào cũng dựng lại nội dung liên tục, nên theo dõi thay đổi thay vì sửa từng chuỗi.
+if (CONFIG.xung !== 'em') {
+  const fix = n => {
+    if (n.nodeType === 3) { const t = xung(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; return; }
+    if (n.nodeType !== 1 || /^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(n.nodeName)) return;
+    if (n.placeholder) n.placeholder = xung(n.placeholder);
+    n.childNodes.forEach(fix);
+  };
+  new MutationObserver(ms => ms.forEach(m => m.type === 'characterData' ? fix(m.target) : m.addedNodes.forEach(fix)))
+    .observe(root, { childList: true, subtree: true, characterData: true });
+}
 addEventListener('hashchange', () => { if (!root.querySelector('.lock')) render(); });
 
 // Đếm phút học: chỉ tính khi đang ở màn học, trang đang mở và có thao tác trong 2 phút gần nhất

@@ -1,6 +1,7 @@
 // Huấn luyện viên: lời khen, lời động viên, và hướng dẫn sửa khi làm sai.
 import { esc, loadContent, xung } from './util.js';
 import { ring } from './fx.js';
+import { CONFIG } from './config.js';
 
 const pick = a => a[(Math.random() * a.length) | 0];
 
@@ -42,7 +43,7 @@ export const tips = () => (tipsP ??= loadContent('tips').catch(() => ({})));
 export function fixBox({ given, right, explain, tag, sentence }, T = {}) {
   const t = T[tag] || {};
   return `<div class="fix">
-    ${given != null ? `<div class="fix-row"><span class="fix-k no">Em chọn</span><span class="strike">${esc(given)}</span></div>` : ''}
+    ${given != null ? `<div class="fix-row"><span class="fix-k no">${xung('Em')} chọn</span><span class="strike">${esc(given)}</span></div>` : ''}
     <div class="fix-row"><span class="fix-k ok">Đúng là</span><b>${esc(right)}</b></div>
     ${sentence ? `<div class="fix-row"><span class="fix-k">Câu đúng</span><span>${sentence}</span></div>` : ''}
     ${explain || t.rule ? `<div class="fix-row"><span class="fix-k">Vì sao</span><span>${esc(explain || t.rule)}</span></div>` : ''}
@@ -71,10 +72,10 @@ export function spellingDiff(given, right) {
   if (b.endsWith('e') && !a.endsWith('e')) hints.push('Đừng quên chữ e câm ở cuối từ.');
   if (b.endsWith('ly') && !a.endsWith('ly')) hints.push('Trạng từ thường kết thúc bằng -ly (sharp → sharply).');
   if (/tion$/.test(b) && !/tion$/.test(a)) hints.push('Âm "sần" cuối từ thường viết là -tion.');
-  if (b.endsWith('s') && a === b.slice(0, -1)) hints.push('Thiếu -s ở cuối. Trong Listening thiếu -s là mất điểm.');
+  if (b.endsWith('s') && a === b.slice(0, -1)) hints.push(CONFIG.ielts ? 'Thiếu -s ở cuối. Trong Listening thiếu -s là mất điểm.' : 'Thiếu -s ở cuối.');
   if (/[aeiou]{2}/.test(b) && !/[aeiou]{2}/.test(a)) hints.push(`Chú ý cụm nguyên âm "${esc(b.match(/[aeiou]{2}/)[0])}".`);
   if (!hints.length && a.length && Math.abs(a.length - b.length) <= 2) hints.push('Gần đúng rồi, chỉ sai vài chữ cái. Đọc to từ đó và đánh vần từng chữ.');
-  return `<div class="spell"><div><span class="fix-k no">Em gõ</span> <span class="mono">${mine || '(trống)'}</span></div>
+  return `<div class="spell"><div><span class="fix-k no">${xung('Em')} gõ</span> <span class="mono">${mine || '(trống)'}</span></div>
     <div><span class="fix-k ok">Đúng là</span> <span class="mono">${fix}</span></div>
     ${hints.length ? `<div class="fix-tip">💡 ${hints.join(' ')}</div>` : ''}</div>`;
 }

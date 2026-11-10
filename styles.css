@@ -344,3 +344,9 @@ header.top .audio-wrap { margin-left: auto; margin-right: 8px; }
 .ipa { font-family: "Segoe UI", "Lucida Sans Unicode", "Arial Unicode MS", system-ui, sans-serif; color: var(--muted); font-size: 1.05rem; margin-top: 2px; text-align: center; }
 .ipa small, .ipa-s small { font-size: 0.75em; }
 .ipa-s { font-family: "Segoe UI", "Lucida Sans Unicode", system-ui, sans-serif; color: var(--muted); font-size: 0.85rem; }
+
+/* Đọc thử trên thẻ từ */
+.rec-res { text-align: center; font-size: 0.88rem; min-height: 0; margin-top: 6px; }
+.rec-res:empty { display: none; }
+.good-t { color: var(--good); font-weight: 600; }
+.bad-t { color: var(--bad); font-weight: 600; }

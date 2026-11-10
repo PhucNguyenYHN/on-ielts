@@ -64,7 +64,7 @@ function talk(view, t) {
   view.querySelectorAll('[data-p]').forEach(b => { b.onclick = () => { stopTTS(); say(b.dataset.p, { lang: t.lang, rate: 0.85 }); }; });
   view.querySelector('[data-quiz]').onclick = () => {
     cancelled = true; stopTTS();
-    const items = t.questions.map(q => ({ q: q.q, type: 'mcq', options: q.o, answer: q.a, explain: q.explain, tag: 'L-detail' }));
+    const items = t.questions.map(q => ({ q: q.q, type: 'mcq', options: q.o, answer: q.a, explain: q.explain, tag: 'L-talk' }));
     runQuiz(view, items, {
       title: t.title, lang: t.lang,
       onAnswer: r => store.logAttempt({ item: `LT-${t.id}`, skill: 'L', type: 'L-talk', correct: r.correct, ms: r.ms }),

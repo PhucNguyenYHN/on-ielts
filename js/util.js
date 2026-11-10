@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js';
 
 // Đổi cách xưng hô "em" theo hồ sơ (Phúc được gọi là "anh")
-export const xung = s => CONFIG.xung === 'em' ? s : String(s).replace(/(^|[\s(])([Ee])m(?=[\s,.!?)]|$)/g, (m, a, e) => a + (e === 'E' ? 'A' : 'a') + 'nh');
+export const xung = s => CONFIG.xung === 'em' ? s : String(s).replace(/(^|[\s(])([Ee])m(?=[\s,.!?)]|$)(?! (gái|trai|họ|ruột|út))/g, (m, a, e) => a + (e === 'E' ? 'A' : 'a') + 'nh');
 
 export function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

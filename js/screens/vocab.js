@@ -7,6 +7,40 @@ import { say, bindSay } from '../tts.js';
 import { runQuiz } from '../quiz.js';
 import { resultCard, spellingDiff } from '../coach.js';
 import { confetti } from '../fx.js';
+import { sttSupport, sttError, listen, compare } from '../speech.js';
+
+// Nút đọc thử trên thẻ: máy nghe rồi báo đã nhận ra từ chưa. Không bắt buộc, không tính vào điểm nhớ từ.
+const recBtn = () => sttSupport() ? '<button class="say rec" data-rec>🎙 Đọc thử</button>' : '';
+function bindRec(view, v) {
+  const btn = view.querySelector('[data-rec]'), out = view.querySelector('[data-recres]');
+  if (!btn) return;
+  let sess = null, timer = 0;
+  const finish = async () => {
+    if (!sess) return;
+    const s = sess; sess = null; clearTimeout(timer);
+    btn.disabled = true; btn.textContent = '…';
+    const { text, error } = await s.stop();
+    btn.disabled = false; btn.textContent = '🎙 Đọc lại';
+    if (!text) { out.innerHTML = `<span class="muted">${esc(sttError(error || 'no-speech'))}</span>`; return; }
+    const c = compare(v.w, text), ok = c.score === 1;
+    store.logAttempt({ item: `PW-${v.w}`, skill: 'S', type: 'S-word', correct: ok, detail: ok ? '' : `nghe thành: ${text}` });
+    out.innerHTML = ok
+      ? `<span class="good-t">✓ Rõ rồi, máy nghe đúng "${esc(v.w)}".</span>`
+      : `<span class="bad-t">Máy nghe thành: <i>${esc(text)}</i>.</span> <span class="muted">Bấm 🔊 nghe lại, nhìn phiên âm${v.i ? ` /${esc(v.i.split(' · ')[0].replace(/\s*\(.*\)$/, ''))}/` : ''}, chú ý chỗ nhấn ˈ và âm cuối, rồi đọc chậm, rõ.</span>`;
+    if (ok) confetti(20);
+  };
+  btn.onclick = () => {
+    if (sess) return finish();
+    out.innerHTML = '<span class="muted">Đang nghe… đọc từ này một lần.</span>';
+    btn.textContent = '■ Xong';
+    sess = listen({
+      lang: 'en-US',
+      onText: t => { if (compare(v.w, t).score === 1) { clearTimeout(timer); timer = setTimeout(finish, 400); } },
+      onError: e => { out.innerHTML = `<span class="muted">${esc(sttError(e))}</span>`; },
+    });
+    timer = setTimeout(finish, 5000);
+  };
+}
 
 // Phiên âm giọng Anh: "ɪnˈkriːs (v) · ˈɪŋkriːs (n)" → /ɪnˈkriːs/ (v) · /ˈɪŋkriːs/ (n)
 const ipa = v => !v.i ? '' : v.i.split(' · ').map(x => { const m = x.match(/^(.*?)(?:\s+\((.+)\))?$/); return `/${esc(m[1])}/${m[2] ? ` <small>(${esc(m[2])})</small>` : ''}`; }).join(' · ');
@@ -47,7 +81,7 @@ function menu(view, vocab) {
     <a class="card" href="#/vocab/review"><h3>2. Ôn thẻ đến hạn <span class="badge">${due} thẻ</span></h3>
       <div class="meta">Lật thẻ nhớ lại nghĩa, tự chấm Quên, Khó hoặc Nhớ.</div></a>
     <a class="card" href="#/vocab/dictation"><h3>3. Nghe và gõ chính tả</h3>
-      <div class="meta">Nghe 10 từ em đã ôn ít nhất hai lần rồi gõ lại. Dùng để sửa lỗi chính tả và thiếu "s" khi làm Listening.</div></a>
+      <div class="meta">Nghe 10 từ em đã ôn ít nhất hai lần rồi gõ lại. ${CONFIG.ielts ? 'Dùng để sửa lỗi chính tả và thiếu "s" khi làm Listening.' : 'Luyện tai nhận ra từ đã học khi nghe.'}</div></a>
     <a class="card" href="#/vocab/list"><h3>Danh sách từ theo chủ đề</h3>
       <div class="meta">Xem nghĩa và nghe phát âm giọng Anh hoặc Mỹ.</div></a>`;
 }
@@ -80,7 +114,8 @@ function cards(view, vocab) {
         <div class="row" style="justify-content:center;margin-top:8px">
           <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button>
           <button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button>
-        </div>
+          ${recBtn()}
+        </div><div class="rec-res" data-recres></div>
         <div class="back" hidden>
           <div class="vn">${esc(v.vn)}</div>
           <p>${esc(v.ex)} <button class="say" data-say="${esc(v.ex)}" data-lang="${accent()}">🔊</button></p>
@@ -95,6 +130,7 @@ function cards(view, vocab) {
       </div>
       <p class="muted small" style="text-align:center">${remembered ? `Đã nhớ ${remembered} thẻ trong buổi này` : 'Lật thẻ, tự chấm thật lòng để app nhắc đúng lúc'}</p>`;
     bindSay(view);
+    bindRec(view, v);
     say(v.w, { lang: accent() });
     view.querySelector('[data-flip]').onclick = e => {
       e.target.hidden = true;
@@ -164,7 +200,7 @@ function learn(view, vocab) {
         <div class="word">${esc(v.w)}</div>${v.i ? `<div class="ipa">${ipa(v)}</div>` : ''}
         <div class="pos">${esc(v.p)} · ${esc(v.t)}${v.cefr ? ` · <span class="badge">${esc(v.cefr)}</span>` : ''}</div>
         <div class="row" style="justify-content:center;margin-top:8px">
-          <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button><button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button></div>
+          <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button><button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button>${recBtn()}</div><div class="rec-res" data-recres></div>
         <div class="back" hidden><div class="vn">${esc(v.vn)}</div>
           <p>${esc(v.ex)} <button class="say" data-say="${esc(v.ex)}" data-lang="${accent()}">🔊</button></p>
           <div class="memo"><b>💡 Cách nhớ</b><div>${esc(v.m || autoTip(v))}</div></div></div>
@@ -173,6 +209,7 @@ function learn(view, vocab) {
       <div class="row" data-nav hidden>${i ? '<button class="btn ghost" data-prev>← Từ trước</button>' : ''}<button class="btn" data-next style="flex:1">${i + 1 < words.length ? 'Từ tiếp theo →' : 'Xong, sang luyện tập →'}</button></div>
       <p class="muted small" style="text-align:center">Thử đoán nghĩa trước khi lật. Sau đó đọc to từ, câu ví dụ và nhìn kỹ cách nhớ.</p>`;
     bindSay(view);
+    bindRec(view, v);
     say(v.w, { lang: accent() });
     view.querySelector('[data-show]').onclick = e => {
       e.target.hidden = true;

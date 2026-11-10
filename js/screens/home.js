@@ -19,6 +19,17 @@ const QUOTES = [
   'Chậm mà chắc, chuỗi ngày học là vũ khí mạnh nhất.',
 ];
 
+// Câu động viên cho người học giao tiếp, nghe hội thảo (không thi IELTS)
+const QUOTES_B1 = [
+  'Không cần hoàn hảo, chỉ cần đều đặn.',
+  'Hôm nay học 15 phút còn hơn mai học 2 tiếng.',
+  'Nghe được một câu hôm nay là nghe được câu đó ở hội thảo.',
+  'Nói sai mà người ta hiểu vẫn hơn im lặng.',
+  'Một bài nghe kỹ có ích hơn năm bài nghe lướt.',
+  'Chuyên môn anh đã có, tiếng Anh chỉ là cây cầu.',
+  'Chậm mà chắc, chuỗi ngày học là vũ khí mạnh nhất.',
+];
+
 function greet() {
   const h = new Date().getHours();
   return h < 11 ? ['Chào buổi sáng', '☀️'] : h < 14 ? ['Chào buổi trưa', '🌤️'] : h < 18 ? ['Chào buổi chiều', '🌇'] : ['Chào buổi tối', '🌙'];
@@ -50,7 +61,8 @@ export default async function home(view) {
   const st = streak(s.days);
   const learned = learnedCount(s.srs);
   const [hello, emoji] = greet();
-  const quote = xung(QUOTES[Math.floor(Date.now() / 864e5) % QUOTES.length]);
+  const Q = CONFIG.ielts ? QUOTES : QUOTES_B1;
+  const quote = xung(Q[Math.floor(Date.now() / 864e5) % Q.length]);
 
   const cards = [];
   const graded = store.unseenGraded();
