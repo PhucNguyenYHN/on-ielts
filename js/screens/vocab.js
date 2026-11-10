@@ -8,6 +8,7 @@ import { runQuiz } from '../quiz.js';
 import { resultCard, spellingDiff } from '../coach.js';
 import { confetti } from '../fx.js';
 import { sttSupport, sttError, listen, compare } from '../speech.js';
+import { recordPron } from './speak.js';
 
 // Nút đọc thử trên thẻ: máy nghe rồi báo đã nhận ra từ chưa. Không bắt buộc, không tính vào điểm nhớ từ.
 const recBtn = () => sttSupport() ? '<button class="say rec" data-rec>🎙 Đọc thử</button>' : '';
@@ -23,6 +24,7 @@ function bindRec(view, v) {
     btn.disabled = false; btn.textContent = '🎙 Đọc lại';
     if (!text) { out.innerHTML = `<span class="muted">${esc(sttError(error || 'no-speech'))}</span>`; return; }
     const c = compare(v.w, text), ok = c.score === 1;
+    recordPron(c); // từ đọc sai nhiều lần sẽ vào mục Từ hay đọc sai bên Luyện nói
     store.logAttempt({ item: `PW-${v.w}`, skill: 'S', type: 'S-word', correct: ok, detail: ok ? '' : `nghe thành: ${text}` });
     out.innerHTML = ok
       ? `<span class="good-t">✓ Rõ rồi, máy nghe đúng "${esc(v.w)}".</span>`

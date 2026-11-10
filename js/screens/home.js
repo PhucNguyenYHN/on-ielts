@@ -81,7 +81,15 @@ export default async function home(view) {
   const canDictate = Object.values(s.srs).filter(c => c.reps >= 2).length >= 5;
   if (rec) cards.push(task('grammar', `#/grammar/${esc(rec.lesson.id)}`, 'grammar', `Ngữ pháp: ${esc(rec.lesson.title)}`, `${esc(rec.why)} · khoảng 10 phút`));
   if (canDictate) cards.push(task('listen', '#/vocab/dictation', 'headphones', 'Nghe và gõ chính tả', 'Nghe từ đã ôn rồi viết lại, luyện chính tả cho Listening.', '<span class="badge">10 từ</span>'));
-  if (!CONFIG.ielts) cards.push(task('listen', '#/listen', 'headphones', 'Nghe hội thảo', 'Bài nói ngắn về tim mạch, nghe rồi trả lời câu hỏi, xem lời thoại.', '<span class="badge">10 phút</span>'));
+  if (!CONFIG.ielts) {
+    // Gợi ý đúng bước tiếp theo: bài đầu tiên chưa đủ 85% ở cả 3 bước (câu hỏi, nghe chép, nói nhại)
+    const L = s.listen || {}, ok = k => (L[k] ?? 0) >= 85;
+    let n = 1;
+    while (n < 10 && ok('T' + n) && ok(`T${n}-chep`) && ok(`T${n}-nhai`)) n++;
+    const id = 'T' + n;
+    const [href, what] = !ok(id) ? [`#/listen/${id}`, 'nghe và trả lời câu hỏi'] : !ok(`${id}-chep`) ? [`#/listen/${id}/chep`, 'nghe chép từng câu'] : [`#/listen/${id}/nhai`, 'nói nhại từng câu'];
+    cards.push(task('listen', href, 'headphones', `Nghe hội thảo · bài ${n}`, `Bước tiếp theo: ${what}. Xong cả 3 bước từ 85% là sang bài mới.`, '<span class="badge">15 phút</span>'));
+  }
   cards.push(task('speak', CONFIG.ielts ? '#/speak' : '#/speak/part1/0', 'mic', CONFIG.ielts ? 'Luyện nói' : 'Luyện trò chuyện', CONFIG.ielts ? 'Đọc to 5 câu, máy nghe ra đúng chữ là phát âm đạt.' : 'Tự giới thiệu, nói về công việc, đặt câu hỏi ở hội thảo.', '<span class="badge">5 phút</span>'));
 
   view.innerHTML = `

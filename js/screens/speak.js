@@ -68,7 +68,7 @@ function renderWords(words) {
   return words.map(x => `<span style="color:var(${x.ok ? '--good' : '--bad'});${x.ok ? '' : 'text-decoration:underline;font-weight:700'}">${esc(x.w)}</span>`).join(' ');
 }
 
-function recordPron(result) {
+export function recordPron(result) {
   store.update(s => {
     s.pron ||= {};
     result.words.forEach(x => {

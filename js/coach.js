@@ -47,7 +47,7 @@ export function fixBox({ given, right, explain, tag, sentence }, T = {}) {
     <div class="fix-row"><span class="fix-k ok">Đúng là</span><b>${esc(right)}</b></div>
     ${sentence ? `<div class="fix-row"><span class="fix-k">Câu đúng</span><span>${sentence}</span></div>` : ''}
     ${explain || t.rule ? `<div class="fix-row"><span class="fix-k">Vì sao</span><span>${esc(explain || t.rule)}</span></div>` : ''}
-    ${t.tip ? `<div class="fix-tip">💡 <b>Mẹo nhớ:</b> ${esc(t.tip)}</div>` : ''}
+    ${t.tip ? `<div class="fix-tip">💡 <b>${/^L-/.test(tag) ? 'Mẹo' : 'Mẹo nhớ'}:</b> ${esc(t.tip)}</div>` : ''}
     ${t.trap ? `<div class="fix-trap">⚠️ <b>Lỗi hay gặp:</b> ${esc(t.trap)}</div>` : ''}
   </div>`;
 }
