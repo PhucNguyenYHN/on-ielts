@@ -11,7 +11,8 @@ import { sttSupport, sttError, listen, compare } from '../speech.js';
 import { recordPron } from './speak.js';
 
 // Nút đọc thử trên thẻ: máy nghe rồi báo đã nhận ra từ chưa. Không bắt buộc, không tính vào điểm nhớ từ.
-const recBtn = () => sttSupport() ? '<button class="say rec" data-rec>🎙 Đọc thử</button>' : '';
+const recBtn = () => sttSupport() ? `<div class="rec-box"><button class="rec-big" data-rec>🎙 Đọc thử từ này</button>
+  <div class="rec-res" data-recres><span class="muted">Bấm rồi đọc to một lần, máy sẽ báo đã nghe đúng chưa.</span></div></div>` : '';
 function bindRec(view, v) {
   const btn = view.querySelector('[data-rec]'), out = view.querySelector('[data-recres]');
   if (!btn) return;
@@ -22,6 +23,7 @@ function bindRec(view, v) {
     btn.disabled = true; btn.textContent = '…';
     const { text, error } = await s.stop();
     btn.disabled = false; btn.textContent = '🎙 Đọc lại';
+    btn.classList.remove('on');
     if (!text) { out.innerHTML = `<span class="muted">${esc(sttError(error || 'no-speech'))}</span>`; return; }
     const c = compare(v.w, text), ok = c.score === 1;
     recordPron(c); // từ đọc sai nhiều lần sẽ vào mục Từ hay đọc sai bên Luyện nói
@@ -34,7 +36,8 @@ function bindRec(view, v) {
   btn.onclick = () => {
     if (sess) return finish();
     out.innerHTML = '<span class="muted">Đang nghe… đọc từ này một lần.</span>';
-    btn.textContent = '■ Xong';
+    btn.textContent = '■ Đang nghe… bấm để dừng';
+    btn.classList.add('on');
     sess = listen({
       lang: 'en-US',
       onText: t => { if (compare(v.w, t).score === 1) { clearTimeout(timer); timer = setTimeout(finish, 400); } },
@@ -116,8 +119,7 @@ function cards(view, vocab) {
         <div class="row" style="justify-content:center;margin-top:8px">
           <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button>
           <button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button>
-          ${recBtn()}
-        </div><div class="rec-res" data-recres></div>
+        </div>${recBtn()}
         <div class="back" hidden>
           <div class="vn">${esc(v.vn)}</div>
           <p>${esc(v.ex)} <button class="say" data-say="${esc(v.ex)}" data-lang="${accent()}">🔊</button></p>
@@ -202,7 +204,7 @@ function learn(view, vocab) {
         <div class="word">${esc(v.w)}</div>${v.i ? `<div class="ipa">${ipa(v)}</div>` : ''}
         <div class="pos">${esc(v.p)} · ${esc(v.t)}${v.cefr ? ` · <span class="badge">${esc(v.cefr)}</span>` : ''}</div>
         <div class="row" style="justify-content:center;margin-top:8px">
-          <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button><button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button>${recBtn()}</div><div class="rec-res" data-recres></div>
+          <button class="say" data-say="${esc(v.w)}" data-lang="en-GB">🔊 UK</button><button class="say" data-say="${esc(v.w)}" data-lang="en-US">🔊 US</button></div>${recBtn()}
         <div class="back" hidden><div class="vn">${esc(v.vn)}</div>
           <p>${esc(v.ex)} <button class="say" data-say="${esc(v.ex)}" data-lang="${accent()}">🔊</button></p>
           <div class="memo"><b>💡 Cách nhớ</b><div>${esc(v.m || autoTip(v))}</div></div></div>
