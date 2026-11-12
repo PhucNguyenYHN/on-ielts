@@ -1,6 +1,6 @@
 {
-  "name": "Ôn IELTS",
-  "short_name": "Ôn IELTS",
+  "name": "Hi-IELTS",
+  "short_name": "Hi-IELTS",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
