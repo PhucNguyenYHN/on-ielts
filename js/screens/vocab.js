@@ -186,19 +186,25 @@ function plan(vocab) {
 function learn(view, vocab) {
   const s0 = store.get();
   const accent = () => store.get().prefs.accent;
-  const words = plan(vocab).filter(v => !s0.srs[v.w]).slice(0, newWordsLeft(s0, CONFIG.newWordsPerDay));
-  if (!words.length) {
+  // Học theo từng phần 5 từ: xong mỗi phần là lưu ngay, dừng giữa chừng cũng không mất và hôm sau không lặp lại
+  const PART = 5;
+  const allWords = plan(vocab).filter(v => !s0.srs[v.w]).slice(0, newWordsLeft(s0, CONFIG.newWordsPerDay));
+  const parts = Math.ceil(allWords.length / PART);
+  let part = 0, words = allWords.slice(0, PART);
+  const scoreAll = {};
+  const tag = () => parts > 1 ? ` · Phần ${part + 1}/${parts}` : '';
+  if (!allWords.length) {
     view.innerHTML = `<h1>${bi('Học từ mới', 'New words')}</h1><div class="card result-big"><h3>Hôm nay đã học đủ ${CONFIG.newWordsPerDay} từ mới 🎉</h3>
       <p class="meta">Mai quay lại học tiếp nhé. Giờ có thể ôn thẻ đến hạn.</p><a class="btn" href="#/vocab/review">Ôn thẻ</a></div>`;
     return;
   }
-  const score = Object.fromEntries(words.map(v => [v.w, 0]));
+  let score = Object.fromEntries(words.map(v => [v.w, 0]));
   let i = 0;
 
   // Bước 1: xem từng từ, nghĩa hiện sẵn
   function study() {
     const v = words[i];
-    view.innerHTML = `<div class="row" style="justify-content:space-between"><div class="qhead muted small">Bước 1/3 · Xem từ mới · ${i + 1}/${words.length}</div><span class="badge">Từ mới</span></div>
+    view.innerHTML = `<div class="row" style="justify-content:space-between"><div class="qhead muted small">Bước 1/3 · Xem từ mới · ${i + 1}/${words.length}${tag()}</div><span class="badge">Từ mới</span></div>
       <div class="bar"><i style="width:${(i / words.length) * 100}%"></i></div>
       <div class="card flash">
         <div class="word">${esc(v.w)}</div>${v.i ? `<div class="ipa">${ipa(v)}</div>` : ''}
@@ -220,7 +226,7 @@ function learn(view, vocab) {
       view.querySelector('.back').hidden = false;
       view.querySelector('[data-nav]').hidden = false;
     };
-    view.querySelector('[data-next]').onclick = () => { i++; if (i < words.length) study(); else interlude('Bước 2/3 · Chọn nghĩa', 'Nhìn từ tiếng Anh và chọn nghĩa đúng. Sai thì app chỉ cách nhớ.', quizMeaning); };
+    view.querySelector('[data-next]').onclick = () => { i++; if (i < words.length) study(); else interlude('Bước 2/3 · Chọn nghĩa' + tag(), 'Nhìn từ tiếng Anh và chọn nghĩa đúng. Sai thì app chỉ cách nhớ.', quizMeaning); };
     view.querySelector('[data-prev]')?.addEventListener('click', () => { i--; study(); });
   }
 
@@ -236,7 +242,7 @@ function learn(view, vocab) {
     runQuiz(view, items, {
       title: 'Bước 2/3 · Chọn nghĩa', lang: accent(),
       onAnswer: r => { if (r.correct) score[r.item.w]++; store.logAttempt({ item: r.item.w, skill: 'V', type: 'V-meaning', correct: r.correct, ms: r.ms }); },
-      onDone: () => interlude('Bước 3/3 · Viết lại từ', 'Nhìn nghĩa tiếng Việt và viết lại từ tiếng Anh. Có gợi ý chữ cái đầu và số ký tự.', quizWrite),
+      onDone: () => interlude('Bước 3/3 · Viết lại từ' + tag(), 'Nhìn nghĩa tiếng Việt và viết lại từ tiếng Anh. Có gợi ý chữ cái đầu và số ký tự.', quizWrite),
     });
   }
 
@@ -259,14 +265,29 @@ function learn(view, vocab) {
   }
 
   function finish() {
+    // Lưu ngay phần vừa học
     store.update(s => {
       if (s.newToday.date !== today()) s.newToday = { date: today(), n: 0 };
       words.forEach(v => { s.srs[v.w] = review(s.srs[v.w], score[v.w] >= 2 ? 2 : score[v.w] === 1 ? 1 : 0); s.newToday.n++; });
     });
-    const total = words.length * 2, ok = Object.values(score).reduce((a, b) => a + b, 0);
+    Object.assign(scoreAll, score);
+    if (part + 1 < parts) {
+      const good = words.filter(v => score[v.w] >= 2).length;
+      view.innerHTML = `<div class="card result-big"><h3>Xong phần ${part + 1}/${parts} ✅</h3>
+        <p class="meta">Đã lưu ${words.length} từ (${good} từ nhớ chắc). Dừng lúc này cũng không mất, mai sẽ học tiếp từ mới.</p>
+        <div class="row" style="justify-content:center;margin-top:10px"><button class="btn" data-more>Học tiếp ${Math.min(PART, allWords.length - (part + 1) * PART)} từ</button><a class="btn ghost" href="#/">Dừng, về Hôm nay</a></div></div>`;
+      confetti(40);
+      view.querySelector('[data-more]').onclick = () => {
+        part++; words = allWords.slice(part * PART, part * PART + PART);
+        score = Object.fromEntries(words.map(v => [v.w, 0])); i = 0; study();
+      };
+      return;
+    }
+    const done = allWords.filter(v => scoreAll[v.w] != null);
+    const total = done.length * 2, ok = done.reduce((a, v) => a + scoreAll[v.w], 0);
     const pct = Math.round((ok / total) * 100);
-    const weak = words.filter(v => score[v.w] < 2);
-    const r = resultCard(pct, `<p class="meta">Em vừa học ${words.length} từ mới. Từ nào còn sai sẽ quay lại sớm trong phần Ôn thẻ.</p>
+    const weak = done.filter(v => scoreAll[v.w] < 2);
+    const r = resultCard(pct, `<p class="meta">Em vừa học ${done.length} từ mới. Từ nào còn sai sẽ quay lại sớm trong phần Ôn thẻ.</p>
       <div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/vocab/review">Ôn thẻ đến hạn</a><a class="btn ghost" href="#/">Về Hôm nay</a></div>`);
     view.innerHTML = `<h1>${bi('Xong buổi học từ mới', 'Well done')}</h1>${r.html}
       ${weak.length ? `<h2>${bi('Từ cần nhớ thêm', 'Words to revisit')}</h2><div class="card">${weak.map(v => `<div class="review-item"><b>${esc(v.w)}</b> <span class="muted small">${esc(v.p)}</span> · ${esc(v.vn)} <button class="say" data-say="${esc(v.w)}" data-lang="${accent()}">🔊</button>
