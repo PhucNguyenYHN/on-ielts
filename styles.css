@@ -360,3 +360,4 @@ header.top .audio-wrap { margin-left: auto; margin-right: 8px; }
 .rec-big:disabled { opacity: .7; }
 @keyframes recpulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 94, 126, .55); } 50% { box-shadow: 0 0 0 10px rgba(255, 94, 126, 0); } }
 .rec-box .rec-res { margin-top: 10px; font-size: 0.95rem; }
+img.logo { display: block; object-fit: cover; }
