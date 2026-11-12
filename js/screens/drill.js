@@ -69,7 +69,7 @@ export function drill(view, t, mode, back) {
         <div class="row"><button class="btn" data-n>▶ Nghe</button><button class="btn ghost" data-s>🐢 Chậm</button></div>
         <p class="lead" data-target style="margin:12px 0">${dict ? `<span class="muted">${xung('(câu bị ẩn cho tới khi em kiểm tra)')}</span>` : esc(s)}</p>
         ${dict ? '<textarea class="inp" rows="3" style="min-height:0" data-in placeholder="Gõ câu vừa nghe…" autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>' : ''}
-        <div class="row"><button class="btn" data-go>${dict ? 'Kiểm tra' : '🎙 Nói theo'}</button></div>
+        <div class="row"><button class="btn" data-go>${dict ? 'Kiểm tra' : '🎙 Nói theo'}</button><button class="btn ghost" data-skip>Bỏ qua câu này →</button></div>
         <p class="small muted" data-live></p>
         <div data-res></div>
       </div>`;
@@ -78,6 +78,13 @@ export function drill(view, t, mode, back) {
     $('[data-s]').onclick = () => play(s, 0.7);
     const target = $('[data-target]'), live = $('[data-live]'), res = $('[data-res]'), go = $('[data-go]');
     setTimeout(() => !cancelled && play(s, 0.92), 300);
+    $('[data-skip]').onclick = () => {
+      if (session) { session.stop(); session = null; }
+      stopTTS();
+      results.push({ s, score: best ? best.score : 0, tries });
+      idx++;
+      if (idx < list.length) show(); else summary();
+    };
 
     function judge(heard) {
       tries++;

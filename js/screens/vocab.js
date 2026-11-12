@@ -13,13 +13,15 @@ import { recordPron } from './speak.js';
 // Nút đọc thử trên thẻ: máy nghe rồi báo đã nhận ra từ chưa. Không bắt buộc, không tính vào điểm nhớ từ.
 const recBtn = () => sttSupport() ? `<div class="rec-box"><button class="rec-big" data-rec>🎙 Đọc thử từ này</button>
   <div class="rec-res" data-recres><span class="muted">Bấm rồi đọc to một lần, máy sẽ báo đã nghe đúng chưa.</span></div></div>` : '';
+let liveRec = null; // phiên nghe đang mở, tắt khi sang thẻ khác
 function bindRec(view, v) {
+  if (liveRec) { liveRec.stop().catch(() => {}); liveRec = null; }
   const btn = view.querySelector('[data-rec]'), out = view.querySelector('[data-recres]');
   if (!btn) return;
   let sess = null, timer = 0;
   const finish = async () => {
     if (!sess) return;
-    const s = sess; sess = null; clearTimeout(timer);
+    const s = sess; sess = null; liveRec = null; clearTimeout(timer);
     btn.disabled = true; btn.textContent = '…';
     const { text, error } = await s.stop();
     btn.disabled = false; btn.textContent = '🎙 Đọc lại';
@@ -30,7 +32,7 @@ function bindRec(view, v) {
     store.logAttempt({ item: `PW-${v.w}`, skill: 'S', type: 'S-word', correct: ok, detail: ok ? '' : `nghe thành: ${text}` });
     out.innerHTML = ok
       ? `<span class="good-t">✓ Rõ rồi, máy nghe đúng "${esc(v.w)}".</span>`
-      : `<span class="bad-t">Máy nghe thành: <i>${esc(text)}</i>.</span> <span class="muted">Bấm 🔊 nghe lại, nhìn phiên âm${v.i ? ` /${esc(v.i.split(' · ')[0].replace(/\s*\(.*\)$/, ''))}/` : ''}, chú ý chỗ nhấn ˈ và âm cuối, rồi đọc chậm, rõ.</span>`;
+      : `<span class="bad-t">Máy nghe thành: <i>${esc(text)}</i>.</span> <span class="muted">Bấm 🔊 nghe lại, nhìn phiên âm${v.i ? ` /${esc(v.i.split(' · ')[0].replace(/\s*\(.*\)$/, ''))}/` : ''}, chú ý chỗ nhấn ˈ và âm cuối, rồi đọc chậm, rõ. Chưa chuẩn vẫn học tiếp bình thường.</span>`;
     if (ok) confetti(20);
   };
   btn.onclick = () => {
@@ -43,6 +45,7 @@ function bindRec(view, v) {
       onText: t => { if (compare(v.w, t).score === 1) { clearTimeout(timer); timer = setTimeout(finish, 400); } },
       onError: e => { out.innerHTML = `<span class="muted">${esc(sttError(e))}</span>`; },
     });
+    liveRec = sess;
     timer = setTimeout(finish, 5000);
   };
 }

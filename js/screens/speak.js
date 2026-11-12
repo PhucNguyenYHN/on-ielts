@@ -97,6 +97,7 @@ function readAloud(view, data, tag) {
         <p class="q" style="font-size:1.25rem;font-weight:600" data-target>${esc(r.text)}</p>
         <div class="row"><button class="say" data-model>🔊 Nghe mẫu</button><button class="say" data-slow>🐢 Nghe chậm</button></div>
         <button class="btn block" data-go ${sttSupport() ? '' : 'disabled'}>🎙 Bấm rồi đọc to</button>
+        <button class="btn ghost block" data-skip style="margin-top:8px">Bỏ qua câu này →</button>
         <p class="small muted" data-live></p>
         <div data-res></div>
       </div>`;
@@ -107,6 +108,13 @@ function readAloud(view, data, tag) {
     view.querySelector('[data-model]').onclick = () => { stopTTS(); say(r.text, { lang: accent() }); };
     view.querySelector('[data-slow]').onclick = () => { stopTTS(); say(r.text, { lang: accent(), rate: 0.65 }); };
     let tries = 0, best = null;
+    view.querySelector('[data-skip]').onclick = () => {
+      if (session) { session.stop(); session = null; }
+      stopTTS();
+      results.push({ r, score: best ? best.score : 0, tries });
+      idx++;
+      if (idx < list.length) show(); else summary();
+    };
 
     async function finish() {
       const s = session; session = null;
