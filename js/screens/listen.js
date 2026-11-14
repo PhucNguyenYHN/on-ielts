@@ -6,6 +6,7 @@ import { runQuiz } from '../quiz.js';
 import { resultCard } from '../coach.js';
 import { confetti } from '../fx.js';
 import { drill } from './drill.js';
+import { tappable, bindTap } from '../wordtap.js';
 
 export default async function listenScreen(view, [id, mode]) {
   const talks = await loadContent('talks');
@@ -56,8 +57,11 @@ function talk(view, t) {
       <p class="small muted" data-st></p></div>
     <div class="card"><h3>Cụm từ cần chú ý khi nghe</h3>
       ${t.phrases.map(([en, vn]) => `<div class="ex"><b>${esc(en)}</b> <button class="say" data-p="${esc(en)}">🔊</button><div class="muted small">${esc(vn)}</div></div>`).join('')}</div>
+    <details class="card"><summary><b>📄 Lời thoại</b> <span class="muted small">· mở sau khi đã nghe · chạm từ để tra nghĩa</span></summary>
+      <div class="passage" data-tr2>${t.text.map(p => `<p>${tappable(p)}</p>`).join('')}</div></details>
     <button class="btn block" data-quiz>❓ Bước 1: Trả lời ${t.questions.length} câu hỏi</button>
     <div class="row" style="margin-top:10px"><a class="btn ghost" href="#/listen/${t.id}/chep">✍ Bước 2: Nghe chép từng câu</a><a class="btn ghost" href="#/listen/${t.id}/nhai">🗣 Bước 3: Nói nhại từng câu</a></div>`;
+  bindTap(view.querySelector('[data-tr2]'), t.lang);
   view.querySelector('[data-play]').onclick = () => play(0.92);
   view.querySelector('[data-slow]').onclick = () => play(0.72);
   view.querySelector('[data-stop]').onclick = () => { cancelled = true; stopTTS(); };
@@ -74,7 +78,9 @@ function talk(view, t) {
         const r = resultCard(pct, `<div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/listen">Bài khác</a><a class="btn ghost" href="#/listen/${t.id}/chep">✍ Bước 2: Nghe chép</a></div>`);
         view.innerHTML = `<h1>${bi('Kết quả', 'Result')}</h1>${r.html}
           <h2>${bi('Lời thoại', 'Transcript')}</h2>
-          <div class="card passage">${t.text.map(p => `<p>${esc(p)} <button class="say" data-say-p="${esc(p)}">🔊</button></p>`).join('')}</div>`;
+          <p class="muted small">Chạm vào từ bất kỳ để xem nghĩa, nghe phát âm và lưu vào thẻ ôn.</p>
+          <div class="card passage" data-tr>${t.text.map(p => `<p>${tappable(p)} <button class="say" data-say-p="${esc(p)}">🔊</button></p>`).join('')}</div>`;
+        bindTap(view.querySelector('[data-tr]'), t.lang);
         view.querySelectorAll('[data-say-p]').forEach(b => { b.onclick = () => { stopTTS(); say(b.dataset.sayP, { lang: t.lang, rate: 0.85 }); }; });
         if (r.party) confetti();
       },

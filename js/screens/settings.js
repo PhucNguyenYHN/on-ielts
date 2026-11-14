@@ -13,6 +13,13 @@ export default function settings(view) {
       ${CONFIG.pin ? '<p class="muted small" style="margin-top:8px">🔒 Tài khoản này có mã PIN. Dùng chung máy với người khác thì bấm Khóa trước khi đưa máy.</p><button class="btn ghost" data-lock>🔒 Khóa trên máy này</button>' : ''}
     </div>
     <div class="card">
+      <h3>Giao diện</h3>
+      <div class="seg" data-theme-seg>
+        <button data-th="light">☀️ Sáng</button><button data-th="dark">🌙 Tối</button><button data-th="auto">Theo máy</button>
+      </div>
+      <p class="muted small">Mặc định là Sáng. "Theo máy" tự đổi sáng/tối theo cài đặt của điện thoại.</p>
+    </div>
+    <div class="card">
       <label for="accent"><b>Giọng phát âm mẫu</b></label>
       <select id="accent">
         <option value="en-GB">Anh–Anh</option>
@@ -42,6 +49,17 @@ export default function settings(view) {
   view.querySelectorAll('[data-user]').forEach(b => { b.onclick = () => { if (confirm(`Chuyển sang hồ sơ ${USERS[b.dataset.user].learner}?`)) switchUser(b.dataset.user); }; });
   view.querySelector('[data-lock]')?.addEventListener('click', () => { forgetPin(); switchUser('thao'); });
   const msg = view.querySelector('[data-msg]');
+  // Chọn giao diện sáng / tối / theo máy, lưu trên máy này
+  const curTheme = () => { try { return localStorage.getItem('ielts.theme') || 'light'; } catch { return 'light'; } };
+  const markTheme = () => view.querySelectorAll('[data-th]').forEach(b => b.classList.toggle('on', b.dataset.th === curTheme()));
+  view.querySelectorAll('[data-th]').forEach(b => {
+    b.onclick = () => {
+      try { localStorage.setItem('ielts.theme', b.dataset.th); } catch { /* bỏ qua */ }
+      document.documentElement.dataset.theme = b.dataset.th;
+      markTheme();
+    };
+  });
+  markTheme();
   const sel = view.querySelector('#accent');
   sel.value = s.prefs.accent;
   sel.onchange = () => store.update(st => { st.prefs.accent = sel.value; });

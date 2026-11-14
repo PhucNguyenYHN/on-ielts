@@ -46,7 +46,7 @@ export function update(fn) {
 export function logAttempt({ item, skill, type, correct, ms = 0, detail = '' }) {
   const ts = Date.now();
   update(s => {
-    s.attempts.push({ t: type, c: correct ? 1 : 0, ts });
+    s.attempts.push({ t: type, c: correct ? 1 : 0, ts, k: skill }); // k: kỹ năng V/G/L/S/R/W
     if (s.attempts.length > 400) s.attempts.splice(0, s.attempts.length - 400);
   });
   queue.push({ ts, date: today(), item, skill, type, correct: !!correct, ms, detail });
