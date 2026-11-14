@@ -521,3 +521,9 @@ a.card:hover { transform: none; box-shadow: var(--shadow-lg); border-color: colo
 .qitem label.src { display: flex; margin-bottom: 0; }
 .qitem label.segopt { display: inline-flex; margin: 0; }
 .qitem .seg { margin-top: 2px; }
+/* Đề trong app: hướng dẫn nhóm câu, audio dính trên đầu, bài đọc thu gọn được */
+.qintro { margin: 14px 0 4px; padding: 8px 12px; background: var(--card-2); border-left: 3px solid var(--accent); border-radius: 8px; font-size: 0.86rem; color: var(--ink-2); }
+.aud-sticky { position: sticky; top: 96px; z-index: 3; padding: 10px 12px; }
+.aud-sticky audio { margin: 0 0 4px; }
+.passage-box summary { cursor: pointer; font-weight: 700; color: var(--accent); margin: 6px 0; }
+.passage-box .passage { max-height: 60vh; overflow: auto; padding-right: 6px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; background: var(--card-2); }
