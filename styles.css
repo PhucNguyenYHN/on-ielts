@@ -513,3 +513,11 @@ a.card:hover { transform: none; box-shadow: var(--shadow-lg); border-color: colo
 .seg { flex-wrap: wrap; }
 .seg[data-skill-seg] { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
 .seg[data-skill-seg] button { padding: 10px 4px; font-size: 0.88rem; }
+/* Đề trong app: chọn TRUE/FALSE/NOT GIVEN */
+.segopt { display: inline-flex; cursor: pointer; }
+.segopt input { display: none; }
+.segopt span { padding: 8px 12px; font-weight: 600; font-size: 0.85rem; color: var(--muted); }
+.segopt input:checked + span { background: var(--accent); color: #fff; }
+.qitem label.src { display: flex; margin-bottom: 0; }
+.qitem label.segopt { display: inline-flex; margin: 0; }
+.qitem .seg { margin-top: 2px; }
