@@ -527,3 +527,5 @@ a.card:hover { transform: none; box-shadow: var(--shadow-lg); border-color: colo
 .aud-sticky audio { margin: 0 0 4px; }
 .passage-box summary { cursor: pointer; font-weight: 700; color: var(--accent); margin: 6px 0; }
 .passage-box .passage { max-height: 60vh; overflow: auto; padding-right: 6px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; background: var(--card-2); }
+.paud { margin: 6px 0 10px; } .paud audio { width: 100%; }
+.tscript { white-space: pre-wrap; font-size: 0.9rem; line-height: 1.6; margin-top: 8px; color: var(--ink-2); }

@@ -218,6 +218,7 @@ function appTest(view, run) {
       ${t.parts.map(p => `<div class="card">
         <p class="eyebrow">${esc(p.title)}</p>
         ${p.instructions ? `<p class="meta">${esc(p.instructions)}</p>` : ''}
+        ${p.audio ? `<div class="paud" data-paud="${p.audio}"><button class="btn ghost" data-loadaud>🎧 Mở audio phần này</button></div>` : ''}
         ${p.passage ? `<details class="passage-box" open><summary>📄 Bài đọc</summary><div class="passage">${p.passage.map((x, i) => i === 0 ? `<h3>${esc(x)}</h3>` : `<p>${esc(x)}</p>`).join('')}</div></details>` : ''}
         ${p.questions.map(q => `${q.intro ? `<p class="qintro">${esc(q.intro)}</p>` : ''}<div class="qitem" data-q="${qk(q)}"><label><b>${qlabel(q)}.</b> ${esc(q.q)}</label>${field(q, run.ans[qk(q)])}</div>`).join('')}
       </div>`).join('')}
@@ -262,7 +263,22 @@ function appTest(view, run) {
       grade(view, run, t, qs);
     };
   })();
-  return () => { alive = false; clearInterval(iv); if (audioURL) URL.revokeObjectURL(audioURL); };
+  // Audio từng phần: chỉ giải mã khi bấm mở
+  const partURLs = [];
+  view.addEventListener('click', async e => {
+    const b = e.target.closest('[data-loadaud]');
+    if (!b) return;
+    const box = b.closest('[data-paud]');
+    b.disabled = true; b.textContent = 'Đang mở audio…';
+    try {
+      const url = await readBlobURL(box.dataset.paud);
+      if (!alive) return URL.revokeObjectURL(url);
+      partURLs.push(url);
+      view.querySelectorAll('[data-paud] audio').forEach(a => a.pause());
+      box.innerHTML = `<audio controls autoplay src="${url}"></audio>`;
+    } catch { b.disabled = false; b.textContent = 'Không mở được, bấm thử lại'; }
+  });
+  return () => { alive = false; clearInterval(iv); if (audioURL) URL.revokeObjectURL(audioURL); partURLs.forEach(u => URL.revokeObjectURL(u)); };
 }
 
 function field(q, val = '') {
@@ -277,7 +293,8 @@ function field(q, val = '') {
       q.options.map((o, i) => { const L = 'ABCDEFGH'[i]; return `<label class="src"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${L}" ${chosen.includes(L) ? 'checked' : ''}><span><b>${L}</b> ${esc(o)}</span></label>`; }).join('');
   }
   if (q.type === 'letter') {
-    return `<select class="inp" style="max-width:320px"><option value="">— chọn —</option>${q.options.map((o, i) => { const L = 'ABCDEFGH'[i]; return `<option value="${L}" ${val === L ? 'selected' : ''}>${L} · ${esc(o)}</option>`; }).join('')}</select>`;
+    // values: mã riêng (ví dụ i, ii, iii cho nối tiêu đề); mặc định A, B, C…
+    return `<select class="inp" style="max-width:100%"><option value="">— chọn —</option>${q.options.map((o, i) => { const L = q.values ? q.values[i] : 'ABCDEFGH'[i]; return `<option value="${L}" ${val === L ? 'selected' : ''}>${q.values ? '' : L + ' · '}${esc(o)}</option>`; }).join('')}</select>`;
   }
   return `<input class="inp" value="${esc(val || '')}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Câu trả lời">`;
 }
@@ -291,13 +308,15 @@ function grade(view, run, t, qs) {
     let got = 0;
     if (q.type === 'pick') got = Math.min(max, [...new Set(given)].filter(L => q.answer.includes(L)).length);
     else if (q.group) {
+      // Mỗi đáp án trong nhóm có thể có nhiều cách viết, ngăn bằng "|" (books|some books); mỗi đáp án chỉ được tính một lần
       const g = (used[q.group] ||= new Set()), v = norm(given);
-      if (q.answer.some(a => norm(a) === v) && !g.has(v)) { got = 1; g.add(v); }
-    } else got = q.answer.some(a => norm(a) === norm(given)) ? 1 : 0;
+      const k = q.answer.findIndex(a => a.split('|').some(x => norm(x) === v));
+      if (k >= 0 && !g.has(k)) { got = 1; g.add(k); }
+    } else got = q.answer.some(a => a.split('|').some(x => norm(x) === norm(given))) ? 1 : 0;
     return { q, given, got, max };
   });
   // Nhóm theo thứ tự bất kỳ: câu sai thì đáp án cần chỉ ra là đáp án chưa ai dùng
-  res.forEach(x => { if (x.q.group && !x.got) x.expect = x.q.answer.find(a => !used[x.q.group].has(norm(a))) || x.q.answer[0]; });
+  res.forEach(x => { if (x.q.group && !x.got) x.expect = (x.q.answer.find((a, k) => !used[x.q.group].has(k)) || x.q.answer[0]).split('|')[0]; });
   const raw = res.reduce((a, x) => a + x.got, 0), total = res.reduce((a, x) => a + x.max, 0);
   const band = run.practice ? null : toBand(raw, total, run.skill); // đề tự soạn: chỉ luyện dạng câu, không tính band
   const mins = Math.max(1, Math.round((Date.now() - run.start) / 60000));
@@ -326,10 +345,12 @@ function grade(view, run, t, qs) {
       <p class="meta">${mins} phút${band ? (total < 40 ? ' · quy đổi theo tỉ lệ trên 40 câu' : '') : ' · đề luyện dạng câu, không tính band'}</p>
       ${weakType ? `<div class="fix-tip" style="text-align:left;margin-top:10px">💡 <b>Dạng sai nhiều nhất: ${TYPE[weakType[0]]}</b> (${weakType[1].ok}/${weakType[1].n} đúng). ${TIP[weakType[0]]}</div>` : ''}
       <div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/exam">Về Thi thử</a><a class="btn ghost" href="#/exam/app/${encodeURIComponent(run.id)}">Làm lại</a></div></div>
+    ${t.parts.some(p => p.transcript) ? `<h2>${bi('Lời thoại', 'Transcripts')}</h2><p class="muted small">Đối chiếu chỗ nghe sai với lời thoại.</p>
+      ${t.parts.filter(p => p.transcript).map(p => `<details class="card"><summary><b>${esc(p.title)}</b></summary><div class="tscript">${esc(p.transcript)}</div></details>`).join('')}` : ''}
     <h2>${bi('Chữa từng câu', 'Review')}</h2>
     <div class="card">${res.map(x => `<div class="review-item"><b>${qlabel(x.q)}.</b> ${esc(x.q.q)}
       <div class="small" style="margin-top:4px">${ok(x) ? `<span class="good-t">✓ ${esc(show(x.given))}</span>`
-        : `<span class="bad-t">${x.got ? `◐ ${x.got}/${x.max}` : '✗'} ${esc(show(x.given) || '(bỏ trống)')}</span> → <b>${esc(x.q.type === 'pick' ? x.q.answer.join(', ') : (x.expect || x.q.answer[0]))}</b>${x.q.type === 'letter' ? ` <span class="muted">(${esc(x.q.options['ABCDEFGH'.indexOf(x.q.answer[0])])})</span>` : ''}`}</div>
+        : `<span class="bad-t">${x.got ? `◐ ${x.got}/${x.max}` : '✗'} ${esc(show(x.given) || '(bỏ trống)')}</span> → <b>${esc(x.q.type === 'pick' ? x.q.answer.join(', ') : (x.expect || x.q.answer[0]))}</b>${x.q.type === 'letter' && !x.q.values ? ` <span class="muted">(${esc(x.q.options['ABCDEFGH'.indexOf(x.q.answer[0])])})</span>` : ''}`}</div>
       ${x.q.explain && !ok(x) ? `<div class="muted small">${esc(x.q.explain)}</div>` : ''}</div>`).join('')}</div>`;
   if (band ? band >= 5.5 : raw / total >= 0.7) confetti();
 }
