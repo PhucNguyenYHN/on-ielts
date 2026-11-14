@@ -504,3 +504,12 @@ a.card:hover { transform: none; box-shadow: var(--shadow-lg); border-color: colo
 .card .task { padding: 12px; margin: 0 0 8px; box-shadow: none; }
 .card .task:last-of-type { margin-bottom: 0; }
 .plan-head .eyebrow { white-space: nowrap; }
+
+/* Thi thử: chọn nguồn đề */
+.src { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; margin: 8px 0 0; cursor: pointer; background: var(--card); }
+.src:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.src input { margin-top: 4px; accent-color: var(--accent); }
+.src span { display: block; }
+.seg { flex-wrap: wrap; }
+.seg[data-skill-seg] { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+.seg[data-skill-seg] button { padding: 10px 4px; font-size: 0.88rem; }

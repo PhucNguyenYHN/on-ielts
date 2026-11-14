@@ -9,6 +9,7 @@ import settings from './screens/settings.js';
 import speak from './screens/speak.js';
 import writing from './screens/writing.js';
 import listen from './screens/listen.js';
+import exam from './screens/exam.js';
 
 import { icon } from './icons.js';
 import { CONFIG } from './config.js';
@@ -19,13 +20,13 @@ import { unlock } from './lock.js';
 import('./audio.js').then(m => m.mountAudio(document.querySelector('header.top')));
 document.querySelector('.brand').insertAdjacentHTML('beforeend', ` <span class="badge">${CONFIG.learner}</span>`);
 
-const routes = { home, vocab, grammar, placement, mic, settings, speak, writing, listen };
+const routes = { home, vocab, grammar, placement, mic, settings, speak, writing, listen, exam };
 
 // Thanh tab dưới: biểu tượng + nhãn
 const TAB = { home: ['#/', 'home', 'Hôm nay'], vocab: ['#/vocab', 'cards', 'Từ vựng'], grammar: ['#/grammar', 'grammar', 'Ngữ pháp'], listen: ['#/listen', 'headphones', 'Nghe'], speak: ['#/speak', 'mic', 'Luyện nói'], settings: ['#/settings', 'gear', 'Cài đặt'] };
 const TABS = CONFIG.tabs.map(r => [r, ...TAB[r]]);
 document.getElementById('tabs').innerHTML = TABS.map(([r, href, ic, label]) => `<a href="${href}" data-r="${r}">${icon(ic)}<span>${label}</span></a>`).join('');
-const LEARNING = new Set(['vocab', 'grammar', 'placement', 'mic', 'speak', 'listen']);
+const LEARNING = new Set(['vocab', 'grammar', 'placement', 'mic', 'speak', 'listen', 'exam']);
 const root = document.getElementById('app');
 let cleanup = null, current = 'home', token = 0;
 
@@ -35,7 +36,7 @@ async function render() {
   if (cleanup) { try { cleanup(); } catch { /* bỏ qua */ } cleanup = null; }
   stopTTS();
   const my = ++token;
-  const tabOf = { placement: 'home', mic: 'settings', writing: 'home', grammar: CONFIG.tabs.includes('grammar') ? 'grammar' : 'home' };
+  const tabOf = { placement: 'home', mic: 'settings', writing: 'home', exam: 'home', grammar: CONFIG.tabs.includes('grammar') ? 'grammar' : 'home' };
   document.querySelectorAll('.tabs a').forEach(a => a.classList.toggle('on', a.dataset.r === (tabOf[current] || current)));
   // Mỗi màn dựng vào một khung riêng, xong mới gắn vào trang, để màn cũ tải chậm không đè màn mới
   const view = document.createElement('div');

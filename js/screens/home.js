@@ -106,7 +106,15 @@ export default async function home(view) {
   if (!s.device?.ok) extra.push(task('speak', '#/mic', 'mic', 'Thử micro', 'Kiểm tra ghi âm và nhận giọng nói trên máy này.', '<span class="badge">1 phút</span>'));
   const canDictate = Object.values(s.srs).filter(c => c.reps >= 2).length >= 5;
   if (canDictate) extra.push(task('listen', '#/vocab/dictation', 'headphones', 'Nghe và gõ từ', CONFIG.ielts ? 'Nghe từ đã ôn rồi viết lại, luyện chính tả cho Listening.' : 'Nghe từ đã ôn rồi viết lại, luyện tai.', '<span class="badge">10 từ</span>'));
-  if (CONFIG.ielts) extra.push(task('write', '#/writing', 'book', 'Bài viết của em', 'Xem điểm và nhận xét các bài Writing đã nộp.'));
+  if (CONFIG.ielts) {
+    const ex = s.exams || [], lastEx = ex[ex.length - 1];
+    const ago = lastEx ? Math.floor((Date.now() - lastEx.ts) / 864e5) : null;
+    const running = (() => { try { return !!localStorage.getItem('ielts.exam.run'); } catch { return false; } })();
+    extra.unshift(task('test', '#/exam', 'test', running ? 'Đang làm bài thi thử' : 'Thi thử đề chính thức',
+      running ? 'Đồng hồ vẫn đang chạy. Bấm để quay lại bài.' : lastEx ? `Lần gần nhất ${ago ? ago + ' ngày trước' : 'hôm nay'}${lastEx.band ? ` · ${lastEx.skill === 'listening' ? 'Listening' : 'Reading'} band ${lastEx.band}` : ''}. Nên làm 1 đề mỗi tuần.` : 'Đề của British Council, IDP, ielts.org hoặc sách Cambridge. App bấm giờ và quy đổi band.',
+      running ? '<span class="badge warn">Đang làm</span>' : (ago == null || ago >= 7) ? '<span class="badge">Tuần này</span>' : ''));
+    extra.push(task('write', '#/writing', 'book', 'Bài viết của em', 'Xem điểm và nhận xét các bài Writing đã nộp.'));
+  }
 
   // ----- Dải điểm danh tuần (Thứ 2 → Chủ nhật) -----
   const mon = new Date(); mon.setHours(0, 0, 0, 0); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
