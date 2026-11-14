@@ -529,3 +529,10 @@ a.card:hover { transform: none; box-shadow: var(--shadow-lg); border-color: colo
 .passage-box .passage { max-height: 60vh; overflow: auto; padding-right: 6px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; background: var(--card-2); }
 .paud { margin: 6px 0 10px; } .paud audio { width: 100%; }
 .tscript { white-space: pre-wrap; font-size: 0.9rem; line-height: 1.6; margin-top: 8px; color: var(--ink-2); }
+
+/* Nhóm đề theo bộ sách */
+.exam-group { border-top: 1px solid var(--line, rgba(0,0,0,.08)); padding: 6px 0; }
+.exam-group > summary { cursor: pointer; padding: 8px 2px; list-style: none; }
+.exam-group > summary::-webkit-details-marker { display: none; }
+.exam-group > summary::before { content: '▸ '; color: var(--muted, #888); }
+.exam-group[open] > summary::before { content: '▾ '; }

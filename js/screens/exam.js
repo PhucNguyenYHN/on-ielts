@@ -176,14 +176,24 @@ async function renderVault(el) {
     };
     return;
   }
+  const row = t => {
+    const b = t.practice ? [] : doneOf(t.id);
+    const title = t.title.replace(/^Cambridge IELTS \d+ · /, '');
+    return `<a class="card task" data-skill="${t.skill === 'listening' ? 'listen' : 'read'}" href="#/exam/app/${encodeURIComponent(t.id)}">
+      <span class="chip">${t.skill === 'listening' ? 'L' : 'R'}</span>
+      <span class="body"><h3>${esc(title)} ${t.practice ? '<span class="badge">Luyện dạng câu</span>' : '<span class="badge done">Đề chuẩn</span>'}</h3><div class="meta">${t.total} câu · ${t.mins} phút${b.length ? ` · cao nhất band ${Math.max(...b)}` : ''}</div></span>
+      <span class="go">→</span></a>`;
+  };
+  // Nhóm theo bộ sách: cam17-t1-listening → "Cambridge IELTS 17"; các đề khác để chung nhóm đầu
+  const groups = new Map();
+  for (const t of list) {
+    const m = t.id.match(/^cam(\d+)-/);
+    const g = m ? `Cambridge IELTS ${m[1]}` : 'Đề mẫu chính thức (ielts.org)';
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(t);
+  }
   el.innerHTML = `<div class="card"><p class="eyebrow">Đề trong app · chấm tự động</p><h3>Chọn đề</h3>
-    ${list.map(t => {
-      const b = t.practice ? [] : doneOf(t.id);
-      return `<a class="card task" data-skill="${t.skill === 'listening' ? 'listen' : 'read'}" href="#/exam/app/${encodeURIComponent(t.id)}">
-        <span class="chip">${t.skill === 'listening' ? 'L' : 'R'}</span>
-        <span class="body"><h3>${esc(t.title)} ${t.practice ? '<span class="badge">Luyện dạng câu</span>' : '<span class="badge done">Đề chuẩn</span>'}</h3><div class="meta">${t.total} câu · ${t.mins} phút${b.length ? ` · cao nhất band ${Math.max(...b)}` : ''}</div></span>
-        <span class="go">→</span></a>`;
-    }).join('')}</div>`;
+    ${[...groups].map(([g, ts], i) => `<details class="exam-group" ${i === 0 ? 'open' : ''}><summary><b>${esc(g)}</b> <span class="muted small">· ${ts.length} đề</span></summary>${ts.map(row).join('')}</details>`).join('')}</div>`;
 }
 
 async function startApp(view, id) {
@@ -197,7 +207,7 @@ async function startApp(view, id) {
   return appTest(view, run);
 }
 
-const norm = x => String(x ?? '').toLowerCase().replace(/[’']/g, "'").replace(/[.,;:!?"]+$/g, '').replace(/\s*-\s*/g, '-').replace(/\s+/g, ' ').trim();
+const norm = x => String(x ?? '').toLowerCase().replace(/^\s*[£$€]\s*/, '').replace(/[’']/g, "'").replace(/[.,;:!?"]+$/g, '').replace(/\s*-\s*/g, '-').replace(/\s+/g, ' ').trim();
 const qk = q => Array.isArray(q.n) ? q.n.join('-') : String(q.n);           // khóa lưu câu trả lời
 const qlabel = q => Array.isArray(q.n) ? q.n.join(' & ') : q.n;               // số câu hiển thị
 const marksOf = q => Array.isArray(q.n) ? q.n.length : 1;                     // số điểm tối đa
@@ -290,11 +300,11 @@ function field(q, val = '') {
   if (q.type === 'mcq' || q.type === 'pick') {
     const multi = q.type === 'pick', chosen = multi ? (Array.isArray(val) ? val : []) : [val];
     return (multi ? `<p class="muted small" style="margin:2px 0">Chọn ${marksOf(q)} đáp án.</p>` : '') +
-      q.options.map((o, i) => { const L = 'ABCDEFGH'[i]; return `<label class="src"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${L}" ${chosen.includes(L) ? 'checked' : ''}><span><b>${L}</b> ${esc(o)}</span></label>`; }).join('');
+      q.options.map((o, i) => { const L = 'ABCDEFGHIJKLMNOP'[i]; return `<label class="src"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${L}" ${chosen.includes(L) ? 'checked' : ''}><span><b>${L}</b> ${esc(o)}</span></label>`; }).join('');
   }
   if (q.type === 'letter') {
     // values: mã riêng (ví dụ i, ii, iii cho nối tiêu đề); mặc định A, B, C…
-    return `<select class="inp" style="max-width:100%"><option value="">— chọn —</option>${q.options.map((o, i) => { const L = q.values ? q.values[i] : 'ABCDEFGH'[i]; return `<option value="${L}" ${val === L ? 'selected' : ''}>${q.values ? '' : L + ' · '}${esc(o)}</option>`; }).join('')}</select>`;
+    return `<select class="inp" style="max-width:100%"><option value="">— chọn —</option>${q.options.map((o, i) => { const L = q.values ? q.values[i] : 'ABCDEFGHIJKLMNOP'[i]; return `<option value="${L}" ${val === L ? 'selected' : ''}>${q.values ? '' : L + ' · '}${esc(o)}</option>`; }).join('')}</select>`;
   }
   return `<input class="inp" value="${esc(val || '')}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Câu trả lời">`;
 }
@@ -350,7 +360,7 @@ function grade(view, run, t, qs) {
     <h2>${bi('Chữa từng câu', 'Review')}</h2>
     <div class="card">${res.map(x => `<div class="review-item"><b>${qlabel(x.q)}.</b> ${esc(x.q.q)}
       <div class="small" style="margin-top:4px">${ok(x) ? `<span class="good-t">✓ ${esc(show(x.given))}</span>`
-        : `<span class="bad-t">${x.got ? `◐ ${x.got}/${x.max}` : '✗'} ${esc(show(x.given) || '(bỏ trống)')}</span> → <b>${esc(x.q.type === 'pick' ? x.q.answer.join(', ') : (x.expect || x.q.answer[0]))}</b>${x.q.type === 'letter' && !x.q.values ? ` <span class="muted">(${esc(x.q.options['ABCDEFGH'.indexOf(x.q.answer[0])])})</span>` : ''}`}</div>
+        : `<span class="bad-t">${x.got ? `◐ ${x.got}/${x.max}` : '✗'} ${esc(show(x.given) || '(bỏ trống)')}</span> → <b>${esc(x.q.type === 'pick' ? x.q.answer.join(', ') : (x.expect || x.q.answer[0]))}</b>${x.q.type === 'letter' && !x.q.values ? ` <span class="muted">(${esc(x.q.options['ABCDEFGHIJKLMNOP'.indexOf(x.q.answer[0])])})</span>` : ''}`}</div>
       ${x.q.explain && !ok(x) ? `<div class="muted small">${esc(x.q.explain)}</div>` : ''}</div>`).join('')}</div>`;
   if (band ? band >= 5.5 : raw / total >= 0.7) confetti();
 }
