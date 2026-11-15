@@ -2,7 +2,8 @@ import * as store from '../store.js';
 import { CONFIG } from '../config.js';
 import { esc, streak, weekCount, today, loadContent, xung } from '../util.js';
 import { dueIds, learnedCount } from '../srs.js';
-import { recommendLesson, newWordsLeft, PLACEMENT_SECTIONS } from '../engine.js';
+import { recommendLesson, newWordsLeft, PLACEMENT_SECTIONS, toBand } from '../engine.js';
+import { savedPass, readJSON } from '../vault.js';
 import { icon } from '../icons.js';
 import { ring } from '../fx.js';
 
@@ -41,6 +42,69 @@ function streakNote(n) {
   if (n >= 3) return `${n} ngày liên tục, giữ lửa nhé 🔥`;
   if (n >= 1) return 'Đã học hôm nay, tuyệt!';
   return 'Bắt đầu chuỗi ngày học từ hôm nay nhé';
+}
+
+// ----- Lịch tuần (IELTS): mỗi ngày một kỹ năng trọng tâm, bài lấy lần lượt từ đề trong app -----
+// 0 = Chủ nhật … 6 = Thứ Bảy (theo Date.getDay)
+const FOCUS = { 1: 'R', 2: 'L', 3: 'W1', 4: 'R', 5: 'S', 6: 'W2', 0: 'X' };
+const FOCUS_NAME = { R: 'Reading', L: 'Listening', W1: 'Writing Task 1', W2: 'Writing Task 2', S: 'Speaking', X: 'Thi thử' };
+const isToday = ts => today(new Date(ts)) === today();
+
+// Bài kế tiếp chưa làm cho trọng tâm hôm nay
+async function focusTask(s, f) {
+  let list = null;
+  if (savedPass()) { try { list = await readJSON('index.enc'); } catch { list = null; } }
+  if (!list) return { k: f[0], skill: 'test', href: '#/exam', title: `${FOCUS_NAME[f]}: nhập mã mở đề`, meta: 'Vào Thi thử nhập mã một lần để app tự chọn bài cho từng ngày', mins: '1 phút', done: false };
+  const ex = s.exams || [];
+  const tests = list.filter(t => t.kind !== 'bank' && !t.practice);
+  if (f === 'R' || f === 'L') {
+    const skill = f === 'R' ? 'reading' : 'listening', n = f === 'R' ? 3 : 4;
+    const doneToday = ex.some(x => x.skill === skill && x.src === 'app' && isToday(x.ts));
+    for (const t of tests.filter(t => t.skill === skill)) {
+      if (ex.some(x => x.testId === t.id && x.part == null && x.band)) continue; // cả đề đã làm
+      for (let k = 0; k < n; k++) {
+        if (ex.some(x => x.testId === t.id && x.part === k && !isToday(x.ts))) continue;
+        const name = t.title.replace(/^Cambridge IELTS (\d+) · /, 'Cam $1 · ').replace(' · Academic Reading', '').replace(' · Listening', '');
+        return { k: f, skill: f === 'R' ? 'read' : 'listen', href: `#/exam/app/${encodeURIComponent(t.id)}/${k}`, title: `${f === 'R' ? 'Một bài đọc' : 'Một part nghe'}: ${esc(name)} · ${f === 'R' ? 'Passage' : 'Part'} ${k + 1}`, meta: f === 'R' ? '13–14 câu, chấm ngay, chữa từng câu' : '10 câu, nghe một lần, có lời thoại sau khi chấm', mins: f === 'R' ? '20 phút' : '10 phút', done: doneToday };
+      }
+    }
+  }
+  if (f === 'X') {
+    const wk = Math.floor((Date.now() / 864e5 + 3) / 7); // đổi kỹ năng mỗi tuần
+    const skill = wk % 2 ? 'reading' : 'listening';
+    const t = tests.find(t => t.skill === skill && !ex.some(x => x.testId === t.id && x.part == null)) || tests.find(t => t.skill === skill);
+    if (t) return { k: 'X', skill: 'test', href: `#/exam/app/${encodeURIComponent(t.id)}`, title: `Thi thử Chủ nhật: ${skill === 'reading' ? 'Reading' : 'Listening'} cả đề`, meta: `${esc(t.title)} · tính band, tuần sau đổi kỹ năng`, mins: `${t.mins} phút`, done: ex.some(x => x.testId === t.id && x.part == null && isToday(x.ts)) };
+  }
+  const banks = list.filter(t => t.kind === 'bank');
+  if (banks.length && (f === 'W1' || f === 'W2' || f === 'S')) {
+    const bk = s.book || {}, part = f === 'W1' ? 'w1' : f === 'W2' ? 'w2' : 'sp';
+    const items = banks.flatMap(b => b.items.map(it => ({ ...it, id: b.id, book: b.book })));
+    const doneToday = Object.entries(bk).some(([k, v]) => k.endsWith('/' + part) && isToday(v.ts));
+    // dạng đã luyện ít nhất lên trước (W: kiểu bài; S: chủ đề Part 2)
+    const typeOf = it => f === 'W1' ? it.w1 : f === 'W2' ? it.w2 : it.p2;
+    const cnt = {};
+    items.forEach(it => { cnt[typeOf(it)] ??= 0; if (bk[`${it.id}/${it.test}/${part}`]) cnt[typeOf(it)]++; });
+    const todo = items.filter(it => !bk[`${it.id}/${it.test}/${part}`]).sort((a, b) => cnt[typeOf(a)] - cnt[typeOf(b)]);
+    const it = todo[0] || items[0];
+    const href = f === 'S' ? `#/book/s/${it.id}/${it.test}` : `#/book/w/${it.id}/${it.test}/${f === 'W1' ? 1 : 2}`;
+    return { k: f === 'S' ? 'S' : 'W', skill: f === 'S' ? 'speak' : 'write', href, title: `${FOCUS_NAME[f]}: ${esc(it.book)} Test ${it.test}`, meta: f === 'S' ? esc(it.cue) : f === 'W1' ? 'Mô tả biểu đồ, ít nhất 150 từ, nộp để chấm lúc 22h' : 'Viết luận, ít nhất 250 từ, nộp để chấm lúc 22h', mins: f === 'W2' ? '40 phút' : f === 'W1' ? '20 phút' : '15 phút', done: doneToday };
+  }
+  return null;
+}
+
+// Band dự đoán từng kỹ năng: trung bình 3 lần gần nhất (cả đề), chưa có thì ước từ bài luyện từng phần
+function predicted(s) {
+  const ex = s.exams || [];
+  const out = {};
+  for (const skill of ['listening', 'reading']) {
+    const full = ex.filter(x => x.skill === skill && x.band).slice(-3);
+    if (full.length) { out[skill] = { band: Math.round(full.reduce((a, x) => a + x.band, 0) / full.length * 2) / 2, from: `${full.length} đề gần nhất` }; continue; }
+    const parts = ex.filter(x => x.skill === skill && x.part != null && x.total).slice(-6);
+    if (parts.length >= 2) { const r = parts.reduce((a, x) => a + x.raw, 0) / parts.reduce((a, x) => a + x.total, 0); out[skill] = { band: toBand(Math.round(r * 40), 40, skill), from: `ước từ ${parts.length} phần đã luyện` }; }
+  }
+  const w = store.cachedWritings().map(x => parseFloat(x.score)).filter(x => x > 0).slice(0, 3);
+  if (w.length) out.writing = { band: Math.round(w.reduce((a, b) => a + b, 0) / w.length * 2) / 2, from: `${w.length} bài đã chấm` };
+  return out;
 }
 
 const task = (skill, href, ic, title, meta, badge = '') => `<a class="card task" data-skill="${skill}" href="${href}">
@@ -83,7 +147,8 @@ export default async function home(view) {
   const add = (k, skill, href, title, meta, mins, done) => plan.push({ k, skill, href, title, meta, mins, done });
   add('V', 'vocab', '#/vocab/learn', 'Học từ mới', fresh ? `${fresh} từ · xem nghĩa, chọn nghĩa, viết lại` : 'Đã học đủ từ mới hôm nay', '10 phút', !fresh);
   if (due || todayK.has('V')) add('V', 'vocab', '#/vocab/review', 'Ôn thẻ đến hạn', due ? `${due} thẻ cần nhớ lại` : 'Không còn thẻ đến hạn', '5 phút', !due);
-  if (CONFIG.ielts && rec) add('G', 'grammar', `#/grammar/${esc(rec.lesson.id)}`, `Ngữ pháp: ${esc(rec.lesson.title)}`, esc(rec.why), '10 phút', todayK.has('G'));
+  const dow = new Date().getDay();
+  if (CONFIG.ielts && rec && [1, 3, 5, 0].includes(dow)) add('G', 'grammar', `#/grammar/${esc(rec.lesson.id)}`, `Ngữ pháp: ${esc(rec.lesson.title)}`, esc(rec.why), '10 phút', todayK.has('G'));
   if (!CONFIG.ielts) {
     // Bài đầu tiên chưa đủ 85% ở cả 3 bước (câu hỏi, nghe chép, nói nhại)
     const L = s.listen || {}, ok = k => (L[k] ?? 0) >= 85;
@@ -93,10 +158,15 @@ export default async function home(view) {
     const [href, what] = !ok(id) ? [`#/listen/${id}`, 'nghe và trả lời câu hỏi'] : !ok(`${id}-chep`) ? [`#/listen/${id}/chep`, 'nghe chép từng câu'] : [`#/listen/${id}/nhai`, 'nói nhại từng câu'];
     add('L', 'listen', href, `Nghe hội thảo · bài ${n}`, `Bước tiếp theo: ${what}`, '15 phút', todayK.has('L'));
   }
-  add('S', 'speak', CONFIG.ielts ? '#/speak' : '#/speak/part1/0', CONFIG.ielts ? 'Luyện nói' : 'Luyện trò chuyện', CONFIG.ielts ? 'Đọc to 5 câu, máy nghe ra đúng chữ là đạt' : 'Tự giới thiệu, nói về công việc, hỏi ở hội thảo', '5 phút', todayK.has('S'));
+  if (CONFIG.ielts) {
+    const ft = await focusTask(s, FOCUS[dow]);
+    if (ft) plan.push({ ...ft, focus: true });
+  }
+  if (!CONFIG.ielts || [2, 4, 6].includes(dow)) add('S', 'speak', CONFIG.ielts ? '#/speak' : '#/speak/part1/0', CONFIG.ielts ? 'Luyện nói' : 'Luyện trò chuyện', CONFIG.ielts ? 'Đọc to 5 câu, máy nghe ra đúng chữ là đạt' : 'Tự giới thiệu, nói về công việc, hỏi ở hội thảo', '5 phút', todayK.has('S'));
   // Kỹ năng yếu nhất lên đầu những việc chưa xong
   plan.forEach(x => { x.weak = x.k === weak && !x.done; });
-  plan.sort((a, b) => (a.done - b.done) || (b.weak - a.weak));
+  plan.sort((a, b) => (a.done - b.done) || ((b.focus ? 1 : 0) - (a.focus ? 1 : 0)) || (b.weak - a.weak));
+  const pred = CONFIG.ielts ? predicted(s) : {};
   const doneN = plan.filter(x => x.done).length;
 
   const extra = [];
@@ -156,15 +226,19 @@ export default async function home(view) {
 
     <div class="card">
       <div class="plan-head">
-        <div><p class="eyebrow">Kế hoạch hằng ngày</p><h2>Hôm nay</h2></div>
+        <div><p class="eyebrow">Kế hoạch hằng ngày${CONFIG.ielts ? ` · trọng tâm ${FOCUS_NAME[FOCUS[dow]]}` : ''}</p><h2>Hôm nay</h2></div>
         <span class="donering">${ring(plan.length ? doneN / plan.length : 0, { size: 58, stroke: 6, label: `${doneN}/${plan.length}` })}</span>
       </div>
       ${plan.map(x => `<a class="card task ${x.done ? 'done' : ''} ${x.weak ? 'focus' : ''}" data-skill="${x.skill}" href="${x.href}">
         <span class="chip">${x.done ? '✓' : x.k}</span>
-        <span class="body"><h3>${x.title} ${x.weak ? '<span class="tag-weak">Kỹ năng yếu nhất</span>' : ''}</h3><div class="meta">${x.meta} · ${x.mins}</div></span>
+        <span class="body"><h3>${x.title} ${x.focus ? '<span class="badge warn">Trọng tâm hôm nay</span>' : ''}${x.weak ? '<span class="tag-weak">Kỹ năng yếu nhất</span>' : ''}</h3><div class="meta">${x.meta} · ${x.mins}</div></span>
         <span class="go">${icon('arrow', 18)}</span></a>`).join('')}
       ${doneN === plan.length ? '<p class="small" style="text-align:center;color:var(--good);font-weight:700">Xong hết việc hôm nay 🎉</p>' : ''}
+      ${CONFIG.ielts ? `<div class="weekplan">${[1, 2, 3, 4, 5, 6, 0].map(d => `<span class="${d === dow ? 'on' : ''}"><b>${['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d]}</b>${{ R: 'Đọc', L: 'Nghe', W1: 'Viết 1', W2: 'Viết 2', S: 'Nói', X: 'Thi thử' }[FOCUS[d]]}</span>`).join('')}</div>
+        <p class="muted small" style="margin:6px 0 0">Ngày nào cũng có từ mới và ôn thẻ; ngữ pháp T2·T4·T6·CN, đọc to T3·T5·T7.</p>` : ''}
     </div>
+    ${CONFIG.ielts ? `<div class="card"><p class="eyebrow">Band dự đoán · mục tiêu ${esc(CONFIG.target || '5.5')}</p>
+      <div class="kpis" style="margin:6px 0 0">${[['listening', 'Listening'], ['reading', 'Reading'], ['writing', 'Writing'], ['speaking', 'Speaking']].map(([k, n]) => `<div class="kpi"><b>${pred[k] ? pred[k].band : '–'}</b><span>${n}</span><span class="muted small" style="font-size:.7rem">${pred[k] ? esc(pred[k].from) : k === 'speaking' ? 'chấm qua bản ghi' : 'chưa có bài'}</span></div>`).join('')}</div></div>` : ''}
 
     <div class="card">
       <p class="eyebrow">Lộ trình</p>

@@ -25,10 +25,10 @@ const getRun = () => { try { return JSON.parse(localStorage.getItem(RUN)) || nul
 const setRun = r => { try { r ? localStorage.setItem(RUN, JSON.stringify(r)) : localStorage.removeItem(RUN); } catch { /* bỏ qua */ } };
 const fmt = s => `${s < 0 ? '-' : ''}${Math.floor(Math.abs(s) / 60)}:${String(Math.abs(s) % 60).padStart(2, '0')}`;
 
-export default function exam(view, [mode, id] = []) {
+export default function exam(view, [mode, id, part] = []) {
   const run = getRun();
   if (run) return run.app ? appTest(view, run) : running(view, run);
-  if (mode === 'app' && id) return startApp(view, id);
+  if (mode === 'app' && id) return startApp(view, id, part);
   return menu(view);
 }
 
@@ -197,13 +197,15 @@ async function renderVault(el) {
     ${[...groups].map(([g, ts], i) => `<details class="exam-group" ${i === 0 ? 'open' : ''}><summary><b>${esc(g)}</b> <span class="muted small">· ${ts.length} đề</span></summary>${ts.map(row).join('')}</details>`).join('')}</div>`;
 }
 
-async function startApp(view, id) {
+// part: chỉ làm một phần của đề (một bài đọc 20 phút, một part nghe 10 phút), không tính band
+async function startApp(view, id, part) {
   view.innerHTML = '<p class="muted">Đang mở đề…</p>';
   let list;
   try { list = await readJSON('index.enc'); } catch { location.hash = '#/exam'; return; }
   const meta = list.find(x => x.id === id);
   if (!meta) { location.hash = '#/exam'; return; }
-  const run = { app: true, id, practice: !!meta.practice, file: meta.file, audio: meta.audio, title: meta.title, skill: meta.skill, mins: meta.mins, start: Date.now(), ans: {} };
+  const one = part != null && /^\d$/.test(part) ? +part : null;
+  const run = { app: true, id, practice: !!meta.practice || one != null, part: one, file: meta.file, audio: meta.audio, title: meta.title, skill: meta.skill, mins: one == null ? meta.mins : meta.skill === 'listening' ? 10 : 20, start: Date.now(), ans: {} };
   setRun(run);
   return appTest(view, run);
 }
@@ -221,6 +223,7 @@ function appTest(view, run) {
     let t;
     try { t = await readJSON(run.file); } catch { setRun(null); view.innerHTML = '<div class="card"><p>Không mở được đề. Kiểm tra mã mở đề trong mục Thi thử.</p><a class="btn" href="#/exam">Về Thi thử</a></div>'; return; }
     if (!alive) return;
+    if (run.part != null && t.parts[run.part]) t = { ...t, title: `${t.title} · ${t.parts[run.part].title}`, parts: [t.parts[run.part]] };
     const qs = t.parts.flatMap(p => p.questions);
     view.innerHTML = `<div class="timer" data-timer>⏱ --:--</div>
       <h1>${esc(t.title)}</h1>
@@ -332,7 +335,7 @@ function grade(view, run, t, qs) {
   const band = run.practice ? null : toBand(raw, total, run.skill); // đề tự soạn: chỉ luyện dạng câu, không tính band
   const mins = Math.max(1, Math.round((Date.now() - run.start) / 60000));
   const show = v => Array.isArray(v) ? v.join(', ') : v;
-  store.update(s => { (s.exams ||= []).push({ ts: Date.now(), skill: run.skill, src: 'app', testId: run.id, label: run.title, raw, total, band, mins }); });
+  store.update(s => { (s.exams ||= []).push({ ts: Date.now(), skill: run.skill, src: 'app', testId: run.id, part: run.part ?? undefined, label: t.title, raw, total, band, mins }); });
   res.forEach(x => store.logAttempt({ item: `${run.id}-${qk(x.q)}`, skill: run.skill === 'listening' ? 'L' : 'R', type: `X-${x.q.type}`, correct: x.got === x.max, detail: x.got === x.max ? '' : `${show(x.given)} → ${x.q.answer.join('/')}` }));
   setRun(null);
   // Dạng câu hay sai
@@ -353,9 +356,9 @@ function grade(view, run, t, qs) {
     <div class="card result-big">${ring(raw / total, { size: 110, stroke: 10, label: `${raw}/${total}` })}
       <p class="eyebrow" style="margin-top:6px">${esc(t.title)}</p>
       <h3 style="font-size:1.8rem;margin:4px 0">${band ? `Band ${band}` : `Đúng ${raw}/${total}`}</h3>
-      <p class="meta">${mins} phút${band ? (total < 40 ? ' · quy đổi theo tỉ lệ trên 40 câu' : '') : ' · đề luyện dạng câu, không tính band'}</p>
+      <p class="meta">${mins} phút${band ? (total < 40 ? ' · quy đổi theo tỉ lệ trên 40 câu' : '') : run.part != null ? ' · luyện một phần, không tính band' : ' · đề luyện dạng câu, không tính band'}</p>
       ${weakType ? `<div class="fix-tip" style="text-align:left;margin-top:10px">💡 <b>Dạng sai nhiều nhất: ${TYPE[weakType[0]]}</b> (${weakType[1].ok}/${weakType[1].n} đúng). ${TIP[weakType[0]]}</div>` : ''}
-      <div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/exam">Về Thi thử</a><a class="btn ghost" href="#/exam/app/${encodeURIComponent(run.id)}">Làm lại</a></div></div>
+      <div class="row" style="justify-content:center;margin-top:10px"><a class="btn" href="#/exam">Về Thi thử</a><a class="btn ghost" href="#/exam/app/${encodeURIComponent(run.id)}${run.part != null ? '/' + run.part : ''}">Làm lại</a></div></div>
     ${t.parts.some(p => p.transcript) ? `<h2>${bi('Lời thoại', 'Transcripts')}</h2><p class="muted small">Đối chiếu chỗ nghe sai với lời thoại.</p>
       ${t.parts.filter(p => p.transcript).map(p => `<details class="card"><summary><b>${esc(p.title)}</b></summary><div class="tscript">${esc(p.transcript)}</div></details>`).join('')}` : ''}
     <h2>${bi('Chữa từng câu', 'Review')}</h2>

@@ -537,3 +537,9 @@ a.card:hover { transform: none; box-shadow: var(--shadow-lg); border-color: colo
 .exam-group > summary::before { content: '▸ '; color: var(--muted, #888); }
 .exam-group[open] > summary::before { content: '▾ '; }
 .exam-img { display: block; width: 100%; max-width: 640px; margin: 8px auto 12px; border-radius: 8px; background: #fff; }
+
+.weekplan { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 12px; }
+.weekplan span { text-align: center; font-size: .72rem; padding: 6px 2px; border-radius: 8px; background: var(--accent-soft); color: var(--muted); line-height: 1.3; }
+.weekplan span b { display: block; font-size: .78rem; color: var(--ink, inherit); }
+.weekplan span.on { background: var(--accent); color: var(--accent-ink); }
+.weekplan span.on b { color: #fff; }

@@ -191,21 +191,31 @@ function learn(view, vocab) {
   const accent = () => store.get().prefs.accent;
   // Học theo từng phần 5 từ: xong mỗi phần là lưu ngay, dừng giữa chừng cũng không mất và hôm sau không lặp lại
   const PART = 5;
-  const allWords = plan(vocab).filter(v => !s0.srs[v.w]).slice(0, newWordsLeft(s0, CONFIG.newWordsPerDay));
+  // Phiên đang dở (thoát giữa chừng): học tiếp đúng bước, đúng từ, giữ điểm đã làm
+  const SKEY = 'ielts.learn.session';
+  const byW = Object.fromEntries(vocab.map(v => [v.w, v]));
+  let ses = null;
+  try { ses = JSON.parse(localStorage.getItem(SKEY)); } catch { /* bỏ qua */ }
+  if (!(ses && ses.date === today() && ses.list?.length && ses.list.every(w => byW[w]) && ses.list.slice(ses.part * PART, ses.part * PART + PART).some(w => !s0.srs[w]))) ses = null;
+  const allWords = ses ? ses.list.map(w => byW[w]) : plan(vocab).filter(v => !s0.srs[v.w]).slice(0, newWordsLeft(s0, CONFIG.newWordsPerDay));
   const parts = Math.ceil(allWords.length / PART);
-  let part = 0, words = allWords.slice(0, PART);
-  const scoreAll = {};
+  let part = ses ? ses.part : 0, words = allWords.slice(part * PART, part * PART + PART);
+  const scoreAll = ses?.scoreAll || {};
+  let step = ses?.step || 'study', answered = ses?.answered || [];
+  const saveSes = () => { try { localStorage.setItem(SKEY, JSON.stringify({ date: today(), list: allWords.map(v => v.w), part, step, i, score, scoreAll, answered })); } catch { /* bỏ qua */ } };
+  const endSes = () => { try { localStorage.removeItem(SKEY); } catch { /* bỏ qua */ } };
   const tag = () => parts > 1 ? ` · Phần ${part + 1}/${parts}` : '';
   if (!allWords.length) {
     view.innerHTML = `<h1>${bi('Học từ mới', 'New words')}</h1><div class="card result-big"><h3>Hôm nay đã học đủ ${CONFIG.newWordsPerDay} từ mới 🎉</h3>
       <p class="meta">Mai quay lại học tiếp nhé. Giờ có thể ôn thẻ đến hạn.</p><a class="btn" href="#/vocab/review">Ôn thẻ</a></div>`;
     return;
   }
-  let score = Object.fromEntries(words.map(v => [v.w, 0]));
-  let i = 0;
+  let score = ses?.score || Object.fromEntries(words.map(v => [v.w, 0]));
+  let i = ses?.i || 0;
 
   // Bước 1: xem từng từ, nghĩa hiện sẵn
   function study() {
+    step = 'study'; answered = []; saveSes();
     const v = words[i];
     view.innerHTML = `<div class="row" style="justify-content:space-between"><div class="qhead muted small">Bước 1/3 · Xem từ mới · ${i + 1}/${words.length}${tag()}</div><span class="badge">Từ mới</span></div>
       <div class="bar"><i style="width:${(i / words.length) * 100}%"></i></div>
@@ -235,7 +245,9 @@ function learn(view, vocab) {
 
   // Bước 2: nhìn từ, chọn nghĩa đúng
   function quizMeaning() {
-    const items = shuffle(words).map(v => {
+    if (step !== 'meaning') { step = 'meaning'; answered = []; }
+    saveSes();
+    const items = shuffle(words.filter(v => !answered.includes(v.w))).map(v => {
       const pool = vocab.filter(x => x.w !== v.w && x.vn !== v.vn);
       const same = shuffle(pool.filter(x => x.t === v.t)).slice(0, 3);
       const others = same.length === 3 ? same : [...same, ...shuffle(pool).slice(0, 3 - same.length)];
@@ -244,20 +256,22 @@ function learn(view, vocab) {
     });
     runQuiz(view, items, {
       title: 'Bước 2/3 · Chọn nghĩa', lang: accent(),
-      onAnswer: r => { if (r.correct) score[r.item.w]++; store.logAttempt({ item: r.item.w, skill: 'V', type: 'V-meaning', correct: r.correct, ms: r.ms }); },
+      onAnswer: r => { if (r.correct) score[r.item.w]++; answered.push(r.item.w); saveSes(); store.logAttempt({ item: r.item.w, skill: 'V', type: 'V-meaning', correct: r.correct, ms: r.ms }); },
       onDone: () => interlude('Bước 3/3 · Viết lại từ' + tag(), 'Nhìn nghĩa tiếng Việt và viết lại từ tiếng Anh. Có gợi ý chữ cái đầu và số ký tự.', quizWrite),
     });
   }
 
   // Bước 3: nhìn nghĩa, viết lại từ tiếng Anh
   function quizWrite() {
-    const items = shuffle(words).map(v => ({
+    if (step !== 'write') { step = 'write'; answered = []; }
+    saveSes();
+    const items = shuffle(words.filter(v => !answered.includes(v.w))).map(v => ({
       w: v.w, q: v.vn, lead: `${v.p} · gợi ý: bắt đầu bằng "${v.w[0]}", ${v.w.length} ký tự`,
       type: 'text', answer: [v.w], ph: 'Gõ từ tiếng Anh', explain: v.ex, tag: 'L-spelling',
     }));
     runQuiz(view, items, {
       title: 'Bước 3/3 · Viết từ', lang: accent(),
-      onAnswer: r => { if (r.correct) score[r.item.w]++; store.logAttempt({ item: r.item.w, skill: 'V', type: 'V-spelling', correct: r.correct, ms: r.ms, detail: r.correct ? '' : String(r.given) }); },
+      onAnswer: r => { if (r.correct) score[r.item.w]++; answered.push(r.item.w); saveSes(); store.logAttempt({ item: r.item.w, skill: 'V', type: 'V-spelling', correct: r.correct, ms: r.ms, detail: r.correct ? '' : String(r.given) }); },
       onDone: finish,
     });
   }
@@ -275,6 +289,8 @@ function learn(view, vocab) {
     });
     Object.assign(scoreAll, score);
     if (part + 1 < parts) {
+      // phần sau bắt đầu từ bước xem từ
+      try { localStorage.setItem(SKEY, JSON.stringify({ date: today(), list: allWords.map(v => v.w), part: part + 1, step: 'study', i: 0, score: Object.fromEntries(allWords.slice((part + 1) * PART, (part + 2) * PART).map(v => [v.w, 0])), scoreAll, answered: [] })); } catch { /* bỏ qua */ }
       const good = words.filter(v => score[v.w] >= 2).length;
       view.innerHTML = `<div class="card result-big"><h3>Xong phần ${part + 1}/${parts} ✅</h3>
         <p class="meta">Đã lưu ${words.length} từ (${good} từ nhớ chắc). Dừng lúc này cũng không mất, mai sẽ học tiếp từ mới.</p>
@@ -286,6 +302,7 @@ function learn(view, vocab) {
       };
       return;
     }
+    endSes();
     const done = allWords.filter(v => scoreAll[v.w] != null);
     const total = done.length * 2, ok = done.reduce((a, v) => a + scoreAll[v.w], 0);
     const pct = Math.round((ok / total) * 100);
@@ -299,6 +316,13 @@ function learn(view, vocab) {
     confetti(r.party ? 110 : 50);
   }
 
+  // Vào lại: tiếp đúng bước đang dở
+  if (ses && words.length) {
+    const go = step === 'meaning' ? quizMeaning : step === 'write' ? quizWrite : study;
+    const what = step === 'meaning' ? 'Bước 2/3 · Chọn nghĩa' : step === 'write' ? 'Bước 3/3 · Viết lại từ' : `Bước 1/3 · Xem từ ${i + 1}/${words.length}`;
+    interlude('Học tiếp chỗ đang dở' + tag(), `${what}. Những câu đã làm được giữ nguyên.`, go);
+    return;
+  }
   study();
 }
 
