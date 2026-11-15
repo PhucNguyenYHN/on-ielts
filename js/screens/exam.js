@@ -43,6 +43,7 @@ function menu(view) {
       <div class="kpi"><b>${best('reading') || '–'}</b><span>Reading cao nhất</span></div>
     </div>
     <div data-vault></div>
+    <a class="card task" data-skill="write" href="#/book"><span class="chip">W·S</span><span class="body"><h3>Writing & Speaking theo sách Cambridge</h3><div class="meta">Đề Task 1, Task 2 và Speaking 3 phần của Cam 17, 18, chia theo dạng đề, có bài mẫu và nhận xét của giám khảo.</div></span><span class="go">→</span></a>
     <div class="card">
       <p class="eyebrow">Đề ở trang ngoài</p>
       <p class="eyebrow">Bước 1</p><h3>Chọn kỹ năng</h3>
@@ -164,7 +165,7 @@ async function renderVault(el) {
   const s = store.get();
   const doneOf = id => (s.exams || []).filter(x => x.testId === id && x.band).map(x => x.band);
   let list = null;
-  if (savedPass()) { try { list = await readJSON('index.enc'); } catch { forget(); } }
+  if (savedPass()) { try { list = (await readJSON('index.enc')).filter(t => t.kind !== 'bank'); } catch { forget(); } }
   if (!list) {
     el.innerHTML = `<div class="card"><p class="eyebrow">Đề trong app</p><h3>🔐 Nhập mã mở đề</h3>
       <p class="meta">Đề trong app được mã hóa. Nhập mã một lần trên máy này là dùng được mãi.</p>

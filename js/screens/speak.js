@@ -44,6 +44,8 @@ function menu(view, data) {
     <a class="card" href="#/speak/read/mix"><h3>5 câu hỗn hợp <span class="badge">5 phút</span></h3><div class="meta">Ưu tiên nhóm âm em còn đọc sai nhiều.</div></a>
     ${Object.entries(data.readTags).map(([t, g]) => `<a class="card" href="#/speak/read/${t}"><h3>${esc(g.name)} ${pct(t)}</h3><div class="meta">${esc(g.tip)}</div></a>`).join('')}
     ${hard.length ? `<a class="card" href="#/speak/words"><h3>Từ hay đọc sai <span class="badge warn">${hard.length} từ</span></h3><div class="meta">${esc(hard.slice(0, 8).map(x => x.w).join(', '))}</div></a>` : ''}
+    <h2>${bi('Đề thi Speaking trong sách', 'Cambridge Part 1–3')}</h2>
+    <a class="card" href="#/book/speak"><h3>Speaking đủ 3 phần theo sách Cambridge</h3><div class="meta">8 bộ đề Cam 17, 18: Part 1, Part 2 (1 phút chuẩn bị, nói 2 phút), Part 3. Chia theo chủ đề Part 2: người, nơi chốn, đồ vật, sự kiện, hoạt động.</div></a>
     <h2>${bi('Trả lời câu hỏi', 'Speaking Part 1')}</h2>
     <a class="card" href="#/speak/part1/0"><h3>${CONFIG.user === 'thao' ? 'Part 1' : 'Trò chuyện'}: ${qset(data).length} câu về bản thân ${xung('em')} ${pct('S-part1')}</h3>
       <div class="meta">${CONFIG.user === 'thao' ? 'Quê, chỗ ở, ngành Dược, dạy thêm, du lịch, tiền bạc.' : 'Tự giới thiệu, công việc bác sĩ, giải thích cho bệnh nhân, đặt câu hỏi và giao lưu ở hội thảo.'} Ghi âm kèm chữ máy nghe được, có câu trả lời mẫu để so.</div></a>`;

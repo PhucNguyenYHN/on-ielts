@@ -113,6 +113,8 @@ export default async function home(view) {
     extra.unshift(task('test', '#/exam', 'test', running ? 'Đang làm bài thi thử' : 'Thi thử đề chính thức',
       running ? 'Đồng hồ vẫn đang chạy. Bấm để quay lại bài.' : lastEx ? `Lần gần nhất ${ago ? ago + ' ngày trước' : 'hôm nay'}${lastEx.band ? ` · ${lastEx.skill === 'listening' ? 'Listening' : 'Reading'} band ${lastEx.band}` : ''}. Nên làm 1 đề mỗi tuần.` : 'Đề của British Council, IDP, ielts.org hoặc sách Cambridge. App bấm giờ và quy đổi band.',
       running ? '<span class="badge warn">Đang làm</span>' : (ago == null || ago >= 7) ? '<span class="badge">Tuần này</span>' : ''));
+    const bk = Object.keys(s.book || {}).length;
+    extra.push(task('write', '#/book', 'pen', 'Writing & Speaking theo sách', `Đề Cam 17, 18 chia theo dạng: Task 1, Task 2, Speaking 3 phần, có bài mẫu.${bk ? ` Đã làm ${bk} bài.` : ''}`, '<span class="badge">Mới</span>'));
     extra.push(task('write', '#/writing', 'book', 'Bài viết của em', 'Xem điểm và nhận xét các bài Writing đã nộp.'));
   }
 
