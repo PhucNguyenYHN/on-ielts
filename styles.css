@@ -536,3 +536,4 @@ a.card:hover { transform: none; box-shadow: var(--shadow-lg); border-color: colo
 .exam-group > summary::-webkit-details-marker { display: none; }
 .exam-group > summary::before { content: '▸ '; color: var(--muted, #888); }
 .exam-group[open] > summary::before { content: '▾ '; }
+.exam-img { display: block; width: 100%; max-width: 640px; margin: 8px auto 12px; border-radius: 8px; background: #fff; }

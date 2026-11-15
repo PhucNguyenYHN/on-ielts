@@ -230,7 +230,7 @@ function appTest(view, run) {
         ${p.instructions ? `<p class="meta">${esc(p.instructions)}</p>` : ''}
         ${p.audio ? `<div class="paud" data-paud="${p.audio}"><button class="btn ghost" data-loadaud>🎧 Mở audio phần này</button></div>` : ''}
         ${p.passage ? `<details class="passage-box" open><summary>📄 Bài đọc</summary><div class="passage">${p.passage.map((x, i) => i === 0 ? `<h3>${esc(x)}</h3>` : `<p>${esc(x)}</p>`).join('')}</div></details>` : ''}
-        ${p.questions.map(q => `${q.intro ? `<p class="qintro">${esc(q.intro)}</p>` : ''}<div class="qitem" data-q="${qk(q)}"><label><b>${qlabel(q)}.</b> ${esc(q.q)}</label>${field(q, run.ans[qk(q)])}</div>`).join('')}
+        ${p.questions.map(q => `${q.intro ? `<p class="qintro">${esc(q.intro)}</p>` : ''}${/^data:image\/(jpeg|png);base64,[A-Za-z0-9+/=]+$/.test(q.image || '') ? `<img class="exam-img" src="${q.image}" alt="Hình của đề (bản đồ, sơ đồ)">` : ''}<div class="qitem" data-q="${qk(q)}"><label><b>${qlabel(q)}.</b> ${esc(q.q)}</label>${field(q, run.ans[qk(q)])}</div>`).join('')}
       </div>`).join('')}
       <button class="btn block" data-submit>Nộp bài và chấm</button>
       <button class="btn ghost" data-quit>Hủy bài này</button>`;
